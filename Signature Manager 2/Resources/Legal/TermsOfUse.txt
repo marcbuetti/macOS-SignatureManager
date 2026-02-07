@@ -1,0 +1,41 @@
+Terms of Use / End User License Agreement (EULA)
+Signature Manager for macOS
+Last updated: September 2025
+
+
+This End User License Agreement (“Agreement”) governs your use of the Signature Manager application (“App”).
+By downloading, installing, or using the App, you agree to be bound by this Agreement.
+
+License
+You are granted a non-exclusive, non-transferable, revocable license to use this App for personal or organizational purposes on any Mac device you own or control.
+
+You may not:
+- Distribute, sublicense, or resell the App or its components
+- Reverse engineer, decompile, or modify the App
+- Use the App for any unlawful or unauthorized purpose
+
+Organizational Use
+If your organization provides a configuration profile, the App may connect to services such as:
+- The organization’s Signature Cloud
+- Microsoft 365 (if enabled by your organization)
+
+Your use of these services is additionally subject to the respective provider’s terms and conditions.
+
+Third-Party Acknowledgements
+The App may use external services (Signature Cloud, Microsoft 365) if activated by your organization.
+Apple®, macOS®, and Microsoft® are trademarks of their respective owners.
+This App is not affiliated with or endorsed by Apple or Microsoft.
+
+Disclaimer of Warranty
+This App is provided “as is” without warranty of any kind.
+The developer makes no guarantees regarding compatibility, performance, or continued availability, including with future updates to macOS, Microsoft 365, or organizational infrastructure.
+
+Limitation of Liability
+In no event shall the developer be liable for any damages arising from the use or inability to use this App, even if advised of the possibility of such damages.
+
+
+Contact
+For support or legal inquiries, please contact:
+Developer: Marc Büttner
+Email: support@mibue.net
+Subject: Signature Manager

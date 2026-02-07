@@ -1,0 +1,45 @@
+func finishUpdate(success: Bool) {
+    DispatchQueue.main.async {
+        if success {
+            self.progress.stopAnimation(self)
+            self.progress.isIndeterminate = false
+            self.progress.doubleValue = 100
+            self.processLabel.stringValue = "Abgeschlossen."
+            
+            if self.mailWasRunning {
+                let script = """
+                    tell application "Mail"
+                        activate
+                    end tell
+                    """
+                let appleScript = NSAppleScript(source: script)
+                var error: NSDictionary?
+                appleScript?.executeAndReturnError(&error)
+                if let error = error {
+                    print("Error reopening Mail: \(error)")
+                }
+            }
+            
+            let appDelegate = NSApplication.shared.delegate as? AppDelegate
+            let button = appDelegate?.statusItem.button
+            let signaturesStatusMenuItem = appDelegate?.signaturesStatusMenuItem
+            DispatchQueue.main.async {
+                button?.image = NSImage(systemSymbolName: "signature", accessibilityDescription: "Signatur Verwaltung: Aktuell")
+                button?.toolTip = "Signatur Verwaltung: Aktuell"
+                signaturesStatusMenuItem?.title = "Signaturen: Aktuell"
+                signaturesStatusMenuItem?.image = NSImage(named: NSImage.statusAvailableName)
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                // Hier rufst du die Funktion zum Herausschieben auf
+                let windowController = self.view.window?.windowController as? NotificationW
+                windowController?.slideOutToRight()
+            }
+        } else {
+            self.progress.stopAnimation(self)
+            self.progress.isIndeterminate = false
+            self.progress.doubleValue = 0
+            self.processLabel.stringValue = "Abgeschlossen."
+        }
+    }
+}

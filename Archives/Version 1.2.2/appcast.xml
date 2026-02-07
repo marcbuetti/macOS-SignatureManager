@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Signature Manager 2</title>
+        <item>
+            <title>1.2.2</title>
+            <pubDate>Tue, 10 Sep 2024 02:31:33 +0200</pubDate>
+            <sparkle:version>1.2.2</sparkle:version>
+            <sparkle:shortVersionString>1.2.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.5</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/VegilifeAG/AppleSignatureManager/releases/download/1.2.2/Signature.Manager.2.dmg" length="2808571" type="application/octet-stream" sparkle:edSignature="xI5gARg/K+COSic4y4uRDj/g06EeJcdiZZDlftWi5w/wjHWj9ZQcgNoONfwNVeDNLxM58XKcroVpkcGVGfZ5Bg=="/>
+        </item>
+    </channel>
+</rss>

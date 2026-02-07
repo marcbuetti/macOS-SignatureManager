@@ -1,0 +1,61 @@
+{
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.00000,0.55725,1.00000,1.00000",
+          "display-p3:0.00000,0.17832,0.96783,1.00000"
+        ]
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : "automatic"
+    }
+  ],
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : {
+                "linear-gradient" : [
+                  "display-p3:0.00000,0.55725,1.00000,1.00000",
+                  "display-p3:0.00000,0.17832,0.96783,1.00000"
+                ]
+              }
+            }
+          ],
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "signature.png",
+          "name" : "signature",
+          "position" : {
+            "scale" : 0.6,
+            "translation-in-points" : [
+              0.140625,
+              -68.890625
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

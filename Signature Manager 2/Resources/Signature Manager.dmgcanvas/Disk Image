@@ -1,0 +1,63 @@
+{
+  "diskImage" : {
+    "appleID" : "mb@mibue.net",
+    "autoopen" : true,
+    "background" : {
+      "image" : "backgroundImage",
+      "imageScaleOption" : 50,
+      "layoutObjects" : [
+        {
+          "bounds" : "{{287, 127}, {117, 95}}",
+          "identifier" : "imageObject1",
+          "image" : "aoiusyovjg",
+          "layoutObjectType" : "image",
+          "uid" : "aoiusyovjg"
+        }
+      ],
+      "type" : 0
+    },
+    "codeSigningIdentityString" : "E66A8D59797B4930199DB7389D09030EE4946284",
+    "iconPreviewVisible" : false,
+    "iconSize" : 150,
+    "itemInfoVisible" : false,
+    "labelPosition" : 0,
+    "licenses" : [
+
+    ],
+    "nameFontSize" : 12,
+    "statusBarVisible" : false,
+    "suggestedDiskImageName" : "Signature Manager 2.dmg",
+    "teamID" : "8S2RY9PW6P",
+    "toolbarVisible" : false,
+    "uid" : "trcmbaujnd",
+    "validationScheme" : 2,
+    "viewLayout" : 0,
+    "volumeIcon" : "volumeIcon",
+    "volumeName" : "Signature Manager 2",
+    "volumeSize" : 0,
+    "volumeSizeOption" : "Automatic",
+    "windowContentHeight" : 384,
+    "windowContents" : [
+      {
+        "filePath" : "\/Users\/mkj-mb\/Documents\/Vegilife-Development\/Signature Manager 2\/Archives\/Version 3.1\/Signature Manager 2.app",
+        "iconSize" : 100,
+        "invisible" : false,
+        "isAnAlias" : false,
+        "location" : "{127, 175}",
+        "relativeFilePath" : "Archives\/Version 3.1\/Signature Manager 2.app"
+      },
+      {
+        "filePath" : "\/Applications",
+        "iconSize" : 100,
+        "invisible" : false,
+        "isAnAlias" : true,
+        "location" : "{553, 175}",
+        "relativeFilePath" : "..\/..\/..\/..\/..\/Applications"
+      }
+    ],
+    "windowContentWidth" : 683,
+    "windowLeft" : 200,
+    "windowTop" : 120
+  },
+  "version" : 4
+}

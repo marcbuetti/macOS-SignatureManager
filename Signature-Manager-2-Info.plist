@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key></key>
+	<string></string>
+	<key>GHApiToken</key>
+	<string>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</string>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://vegilifeag.github.io/AppleSignatureManager/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>siYfD1930zKvD61TVRUHfOd0O4XN+F+V89xuTV5sREA=</string>
+</dict>
+</plist>
