@@ -20,7 +20,7 @@ struct WhatsNewSheet: View {
                     // Header
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(alignment: .center, spacing: 12) {
-                            Text("What’s New")
+                            Text("WHATS_NEW")
                                 .font(.largeTitle.weight(.bold))
                             
                             Image(systemName: "sparkles")
@@ -28,7 +28,7 @@ struct WhatsNewSheet: View {
                                 .foregroundStyle(.tint)
                         }
                         
-                        Text("Here’s what’s new in this version")
+                        Text("WHATS_NEW_IN_THIS_VERSION")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -101,7 +101,7 @@ struct WhatsNewSheet: View {
                 //onClose() // ✅ Bestätigung
                 dismiss()
             } label: {
-                Text("Continue")
+                Text("CONTINUE")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()

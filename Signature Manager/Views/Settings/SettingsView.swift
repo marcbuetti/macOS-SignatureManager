@@ -29,7 +29,7 @@ struct SettingsView: View {
 
     var body: some View {
         ScrollView {
-            sectionHeader(icon: "gear", title: String(localized: "GENERAL"))
+            sectionHeader(icon: "gear", title: "GENERAL")
             
             GroupBox {
                 VStack(spacing: 0) {
@@ -60,7 +60,7 @@ struct SettingsView: View {
 
             Spacer(minLength: 30)
 
-            sectionHeader(icon: "swatchpalette", title: String(localized: "APPEARANCE"))
+            sectionHeader(icon: "swatchpalette", title: "APPEARANCE")
 
             GroupBox {
                 VStack(spacing: 0) {
@@ -134,7 +134,7 @@ struct SettingsView: View {
         }
     }
 
-    private func sectionHeader(icon: String, title: String) -> some View {
+    private func sectionHeader(icon: String, title: LocalizedStringKey) -> some View {
         HStack {
             Image(systemName: icon)
             Text(title).fontWeight(.bold)

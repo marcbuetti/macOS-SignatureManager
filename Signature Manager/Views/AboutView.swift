@@ -138,7 +138,7 @@ struct AboutView: View {
                     .padding(.vertical, 6)
                     
                     HStack {
-                        Button("WHATS_IS_NEW") {
+                        Button("WHATS_NEW") {
                             showWhatsNewSheet.toggle()
                         }
                         .buttonStyle(.bordered)

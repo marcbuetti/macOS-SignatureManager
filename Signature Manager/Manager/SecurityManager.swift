@@ -44,8 +44,8 @@ class SecurityManager {
                             }
 
                             showAlert(
-                                title: String(localized: "AUTHENTICATION_FAILED"),
-                                message: String(localized: "AUTHENTICATION_FAILED_RETRY")
+                                titleKey: "AUTHENTICATION_FAILED",
+                                messageKey: "AUTHENTICATION_FAILED_RETRY"
                             )
                         }
 
@@ -63,8 +63,8 @@ class SecurityManager {
 
                 DispatchQueue.main.async {
                     showAlert(
-                        title: String(localized: "AUTHENTICATION_NOT_AVAILABLE"),
-                        message: String(localized: "TOUCH_ID_OR_PASSWORD_REQUIRED")
+                        titleKey: "AUTHENTICATION_NOT_AVAILABLE",
+                        messageKey: "TOUCH_ID_OR_PASSWORD_REQUIRED"
                     )
                     completion(false)
                 }
@@ -89,8 +89,8 @@ class SecurityManager {
             guard status == errAuthorizationSuccess, let authRef else {
                 DispatchQueue.main.async {
                     showAlert(
-                        title: String(localized: "ADMIN_AUTH_FAILED"),
-                        message: String(localized: "ADMIN_RIGHTS_REQUIRED")
+                        titleKey: "ADMIN_AUTH_FAILED",
+                        messageKey: "ADMIN_RIGHTS_REQUIRED"
                     )
                     completion(false)
                 }
@@ -135,8 +135,8 @@ class SecurityManager {
                     )
                     
                     showAlert(
-                        title: String(localized: "ADMIN_AUTH_FAILED"),
-                        message: String(localized: "ADMIN_RIGHTS_REQUIRED")
+                        titleKey: "ADMIN_AUTH_FAILED",
+                        messageKey: "ADMIN_RIGHTS_REQUIRED"
                     )
                 }
                 
@@ -215,11 +215,11 @@ class SecurityManager {
 
         // MARK: - Shared Alert Helper
 
-        private static func showAlert(title: String, message: String) {
+        private static func showAlert(titleKey: String, messageKey: String) {
             let alert = NSAlert()
             alert.alertStyle = .critical
-            alert.messageText = title
-            alert.informativeText = message
+            alert.messageText = localize(key: titleKey)
+            alert.informativeText = localize(key: messageKey)
             alert.addButton(withTitle: "OK")
             alert.runModal()
         }

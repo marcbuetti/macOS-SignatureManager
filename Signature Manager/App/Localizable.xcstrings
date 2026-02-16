@@ -52,7 +52,20 @@
       }
     },
     "ACTIVATED_CLOUD_SERVICES: MICROSOFT365" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktive Cloud-Verbindungen: Microsoft 365"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active Cloud Services: Microsoft 365"
+          }
+        }
+      }
     },
     "ADD_SIGNATURE_DESCRIPTION" : {
       "localizations" : {
@@ -69,12 +82,6 @@
           }
         }
       }
-    },
-    "ADMIN_AUTH_FAILED" : {
-
-    },
-    "ADMIN_RIGHTS_REQUIRED" : {
-
     },
     "AFTER_SIGNATURE_PLACEHOLDER" : {
       "localizations" : {
@@ -109,10 +116,36 @@
       }
     },
     "API_KEY" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Api Key"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Key"
+          }
+        }
+      }
     },
     "API_KEY_EXAMPLE" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ym8B$8J&u!I2x&ulNU2!t3Z!D6C@Z^t*!&gjVV^rzBG#^b*6"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ym8B$8J&u!I2x&ulNU2!t3Z!D6C@Z^t*!&gjVV^rzBG#^b*6"
+          }
+        }
+      }
     },
     "APPEARANCE" : {
       "localizations" : {
@@ -197,26 +230,6 @@
         }
       }
     },
-    "AUTHENTICATION_NOT_AVAILABLE" : {
-
-    },
-    "AUTHENTICATION_REQUIRED_TO_QUIT" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sie müssen sich authentifizieren, um die Signaturverwaltung abzuschließen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You must authenticate yourself to complete signature management."
-          }
-        }
-      }
-    },
     "AUTOMATIC_CHECK_FOR_SOFTWAREUPDATES" : {
       "localizations" : {
         "de" : {
@@ -266,7 +279,20 @@
       }
     },
     "CHECK" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überprüfen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check"
+          }
+        }
+      }
     },
     "CHECK_FOR_SOFTWAREUPDATES" : {
       "localizations" : {
@@ -316,23 +342,6 @@
         }
       }
     },
-    "CLOUD" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cloud"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cloud"
-          }
-        }
-      }
-    },
     "CLOUD_M365" : {
       "localizations" : {
         "de" : {
@@ -365,9 +374,6 @@
         }
       }
     },
-    "Continue" : {
-
-    },
     "CONTINUE" : {
       "localizations" : {
         "de" : {
@@ -384,25 +390,21 @@
         }
       }
     },
-    "CONTROLLED_BY_REMOTE_MANAGEMENT" : {
-      "extractionState" : "stale",
+    "CUSTOM" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verwaltet durch Fernverwaltung"
+            "value" : "Benutzerdefiniert"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Controlled by Remote Management"
+            "value" : "Custom"
           }
         }
       }
-    },
-    "CUSTOM" : {
-
     },
     "DELETE" : {
       "localizations" : {
@@ -448,23 +450,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Are you sure you want to delete the log?"
-          }
-        }
-      }
-    },
-    "DELETE_SIGNATURE_CONFIRMATION" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Möchten Sie die Signatur wirklich löschen?"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Are you sure you want to delete the signature?"
           }
         }
       }
@@ -664,9 +649,6 @@
     "Hello, World!" : {
 
     },
-    "Here’s what’s new in this version" : {
-
-    },
     "INSTALLING_CONFIGURATION_PROFILE (%@…" : {
       "localizations" : {
         "de" : {
@@ -827,23 +809,6 @@
         }
       }
     },
-    "M365" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Microsoft 365"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Microsoft 365"
-          }
-        }
-      }
-    },
     "MAIL_CLOSE_REQUIRED_FOR_UPDATE" : {
       "localizations" : {
         "de" : {
@@ -893,7 +858,14 @@
       }
     },
     "MANAGEMENT_PROFILE" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Management profile"
+          }
+        }
+      }
     },
     "MANAGEMENT_PROFILE (%@)" : {
       "localizations" : {
@@ -912,7 +884,20 @@
       }
     },
     "MANAGEMENT: %@" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwaltung %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Management %@"
+          }
+        }
+      }
     },
     "MIGRATING_CLOUD_CONNECTIONS" : {
       "localizations" : {
@@ -979,7 +964,20 @@
       }
     },
     "NAME" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name"
+          }
+        }
+      }
     },
     "NEW" : {
       "localizations" : {
@@ -998,7 +996,20 @@
       }
     },
     "NEW_CUSTOM_SIGNATURE" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue benutzerdefinierte Signatur"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New custom signature "
+          }
+        }
+      }
     },
     "NEW_SIGNATURE" : {
       "localizations" : {
@@ -1289,13 +1300,52 @@
       }
     },
     "SERVER_ADDRESS" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serveradresse"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server address"
+          }
+        }
+      }
     },
     "SERVER_ADDRESS_EXMAPLE" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://signaturemanager-api.example.net"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://signaturemanager-api.example.net"
+          }
+        }
+      }
     },
     "SERVER_ADDRESS_HTTPS_DISCLAIMER" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus Sicherheitsgründen setzen wir eine sichere verschlüsselte Verbindung über https voraus."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For security reasons, we require a secure encrypted connection via https."
+          }
+        }
+      }
     },
     "SETTINGS" : {
       "localizations" : {
@@ -1330,7 +1380,20 @@
       }
     },
     "SIGNATURE" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signatur"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signature"
+          }
+        }
+      }
     },
     "SIGNATURE_MANAGER" : {
       "localizations" : {
@@ -1397,7 +1460,20 @@
       }
     },
     "SIGNATURE_NAME_PLACEHOLDER" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "John Appleseed"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "John Appleseed"
+          }
+        }
+      }
     },
     "SIGNATURE_STORAGE" : {
       "localizations" : {
@@ -1432,10 +1508,36 @@
       }
     },
     "STANDARD" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        }
+      }
     },
     "STANDARD_SIGNATURE" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard Signatur"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard signature"
+          }
+        }
+      }
     },
     "SUPPORT" : {
       "localizations" : {
@@ -1465,22 +1567,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Terms of use"
-          }
-        }
-      }
-    },
-    "TOUCH_ID_OR_PASSWORD_REQUIRED" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Touch ID oder Passwort erforderlich"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Touch ID or password required"
           }
         }
       }
@@ -1624,7 +1710,20 @@
       }
     },
     "VERSION: %@" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version: %@"
+          }
+        }
+      }
     },
     "WAITING_FOR_LICENSE_SERVER" : {
       "localizations" : {
@@ -1658,11 +1757,37 @@
         }
       }
     },
-    "What’s New" : {
-
+    "WHATS_NEW" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was gibt es Neues"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What’s New"
+          }
+        }
+      }
     },
-    "WHATS_IS_NEW" : {
-
+    "WHATS_NEW_IN_THIS_VERSION" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier sind die Neuerungen in dieser Version"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Here’s what’s new in this version"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"
