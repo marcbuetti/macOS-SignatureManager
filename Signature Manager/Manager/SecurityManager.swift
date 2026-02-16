@@ -97,35 +97,41 @@ class SecurityManager {
                 return
             }
             
-            let rightName = kAuthorizationRightExecute
-            var rights = AuthorizationRights(
-                count: 1,
-                items: UnsafeMutablePointer(
-                    mutating: [
-                        AuthorizationItem(
-                            name: rightName,
-                            valueLength: 0,
-                            value: nil,
-                            flags: 0
+            let result: OSStatus = {
+                let rightName = kAuthorizationRightExecute
+
+                return rightName.withCString { cString in
+                    
+                    var items = [AuthorizationItem(
+                        name: cString,
+                        valueLength: 0,
+                        value: nil,
+                        flags: 0
+                    )]
+
+                    return items.withUnsafeMutableBufferPointer { buffer in
+                        var rights = AuthorizationRights(
+                            count: UInt32(buffer.count),
+                            items: buffer.baseAddress
                         )
-                    ]
-                )
-            )
-            
-            let flags: AuthorizationFlags = [
-                .interactionAllowed,
-                .extendRights,
-                .preAuthorize
-            ]
-            
-            let result = AuthorizationCopyRights(
-                authRef,
-                &rights,
-                nil,
-                flags,
-                nil
-            )
-            
+
+                        let flags: AuthorizationFlags = [
+                            .interactionAllowed,
+                            .extendRights,
+                            .preAuthorize
+                        ]
+
+                        return AuthorizationCopyRights(
+                            authRef,
+                            &rights,
+                            nil,
+                            flags,
+                            nil
+                        )
+                    }
+                }
+            }()
+
             DispatchQueue.main.async {
                 if result != errAuthorizationSuccess {
                     Logger.shared.log(
@@ -158,34 +164,39 @@ class SecurityManager {
             return false
         }
 
-        let rightName = kAuthorizationRightExecute
-        var rights = AuthorizationRights(
-            count: 1,
-            items: UnsafeMutablePointer(
-                mutating: [
-                    AuthorizationItem(
-                        name: rightName,
-                        valueLength: 0,
-                        value: nil,
-                        flags: 0
+        let result: OSStatus = {
+            let rightName = kAuthorizationRightExecute
+
+            return rightName.withCString { cString in
+                
+                var items = [AuthorizationItem(
+                    name: cString,
+                    valueLength: 0,
+                    value: nil,
+                    flags: 0
+                )]
+
+                return items.withUnsafeMutableBufferPointer { buffer in
+                    var rights = AuthorizationRights(
+                        count: UInt32(buffer.count),
+                        items: buffer.baseAddress
                     )
-                ]
-            )
-        )
 
-        let flags: AuthorizationFlags = [
-            .preAuthorize,
-            .extendRights
-            // 🚫 KEIN interactionAllowed → kein Dialog!
-        ]
+                    let flags: AuthorizationFlags = [
+                        .preAuthorize,
+                        .extendRights
+                    ]
 
-        let result = AuthorizationCopyRights(
-            authRef,
-            &rights,
-            nil,
-            flags,
-            nil
-        )
+                    return AuthorizationCopyRights(
+                        authRef,
+                        &rights,
+                        nil,
+                        flags,
+                        nil
+                    )
+                }
+            }
+        }()
 
         return result == errAuthorizationSuccess
     }
@@ -228,3 +239,4 @@ class SecurityManager {
         return NSLocalizedString(key, comment: "")
     }
 }
+

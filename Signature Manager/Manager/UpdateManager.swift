@@ -393,7 +393,7 @@ private extension UpdateManager {
         
         let errData = err.fileHandleForReading.readDataToEndOfFile()
         let errStr = String(data: errData, encoding: .utf8) ?? ""
-        let outStr = String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        _ = String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
     
         if !errStr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             Logger.shared.log(position: "SHELL.runShell", type: "CRITICAL", content: "stderr: \(errStr)")

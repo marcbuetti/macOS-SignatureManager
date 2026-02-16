@@ -91,9 +91,7 @@ struct HelloView: View {
                 Image(systemName: "sparkles.2")
                     .imageScale(.large)
                 (
-                    Text(MigrationService.hasLegacyVersion ? "UPDATE_COMPLETED" : "WELCOME")
-                    + Text(" - ")
-                    + Text("LETS_GET_STARTED")
+                    Text("\(MigrationService.hasLegacyVersion ? "UPDATE_COMPLETED" : "WELCOME") - LETS_GET_STARTED")
                 )
                 .font(.title2)
                 .foregroundStyle(.secondary)

@@ -42,7 +42,7 @@ struct WhatsNewSheet: View {
                          subtitle: "In our last version appears a security issue that prevented some users from using the app."
                          )*/
                         
-                        WhatsNewRow(
+                        /*WhatsNewRow(
                          icon: "applewatch",
                          title: "Support for Apple Watch",
                          subtitle: "ParkCap has now a budy on Apple Watch! You can now also see your parking time and location and can control the ticket directly from your watch."
@@ -82,13 +82,13 @@ struct WhatsNewSheet: View {
                             icon: "apple.intelligence",
                             title: "Updated algorithms",
                             subtitle: "More parking tickets will be widely accepted, and those that are already accepted will be better recognized. "
-                        )
+                        )*/
                         
                         WhatsNewRow(
                          icon: "app.specular",
                          title: "Updated UI",
                          subtitle: "We are permanently improving the UI, to create the beste experience for you."
-                         )
+                        )
                     }
                 }
                 .padding()

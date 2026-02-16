@@ -1,6 +1,6 @@
 Terms of Use / End User License Agreement (EULA)
 Signature Manager for macOS
-Last updated: September 2025
+Last updated: January 2026
 
 
 This End User License Agreement (“Agreement”) governs your use of the Signature Manager application (“App”).
@@ -33,9 +33,6 @@ The developer makes no guarantees regarding compatibility, performance, or conti
 Limitation of Liability
 In no event shall the developer be liable for any damages arising from the use or inability to use this App, even if advised of the possibility of such damages.
 
-
-Contact
-For support or legal inquiries, please contact:
-Developer: Marc Büttner
-Email: support@mibue.net
-Subject: Signature Manager
+Support
+If you require assistance, wish to report an issue, or have questions regarding the use of this application, please visit our support page: https://support.mibue.net/signature-manager
+You will find a dedicated contact option for direct communication with the developer.

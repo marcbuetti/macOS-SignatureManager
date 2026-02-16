@@ -110,10 +110,10 @@ struct MigrationSheetView: View {
             }
         }
 
-        let manager = LaunchAtLoginManager()
-        manager.toggleLaunchAtLogin(
+        //let manager = LaunchAtLoginManager()
+        /*manager.toggleLaunchAtLogin(
             LegacyStartupControlHelper.getAppStartupState() == "true"
-        )
+        )*/
     }
 
     private func migrateSignatures() {

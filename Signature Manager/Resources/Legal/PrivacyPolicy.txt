@@ -1,6 +1,6 @@
 Privacy Policy
 Signature Manager for macOS
-Last updated: September 2025
+Last updated: January 2026
 
 
 This application respects your privacy.
@@ -38,9 +38,6 @@ Trademarks
 Apple®, macOS®, and Microsoft® are trademarks of their respective owners.
 This app is not affiliated with or endorsed by Apple or Microsoft.
 
-
-Contact
-For any privacy-related questions, please contact:
-Developer: Marc Büttner
-Email: support@mibue.net
-Subject: Signature Manager
+Support
+For questions regarding privacy or general support, please visit:
+https://support.mibue.net/signature-manager

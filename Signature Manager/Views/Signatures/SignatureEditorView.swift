@@ -430,7 +430,7 @@ struct SignatureEditorView: View {
                         systemImage: "checkmark"
                     )
                 }
-                .disabled(saveDisabled)
+                //.disabled(saveDisabled)
 
                 // ❗ NUR IM EDIT-MODUS
                 if let sig = signature {
@@ -813,72 +813,66 @@ struct SignatureEditorView: View {
                 return
             }
             graph.fetchSubfolderContentsAndDownload(fromMacOSFolder: user, success: {
-                do {
-                    let standardDir = targetDir.appendingPathComponent("standard", isDirectory: true)
-                    let customDir = targetDir.appendingPathComponent("custom", isDirectory: true)
 
-                    var collectedFiles: [M365File] = []
+                let standardDir = targetDir.appendingPathComponent("standard", isDirectory: true)
+                let customDir = targetDir.appendingPathComponent("custom", isDirectory: true)
 
-                    if let standardFiles = try? fm.contentsOfDirectory(at: standardDir, includingPropertiesForKeys: nil) {
-                        let htmls = standardFiles.filter { ["html", "txt"].contains($0.pathExtension.lowercased()) }
-                        collectedFiles.append(contentsOf: htmls.map {
-                            M365File(id: $0.path, name: "standard / \($0.lastPathComponent)")
-                        })
-                    }
+                var collectedFiles: [M365File] = []
 
-                    if let customFiles = try? fm.contentsOfDirectory(at: customDir, includingPropertiesForKeys: nil) {
-                        let htmls = customFiles.filter { ["html", "txt"].contains($0.pathExtension.lowercased()) }
-                        collectedFiles.append(contentsOf: htmls.map {
-                            M365File(id: $0.path, name: "custom / \($0.lastPathComponent)")
-                        })
-                    }
+                if let standardFiles = try? fm.contentsOfDirectory(at: standardDir, includingPropertiesForKeys: nil) {
+                    let htmls = standardFiles.filter { ["html", "txt"].contains($0.pathExtension.lowercased()) }
+                    collectedFiles.append(contentsOf: htmls.map {
+                        M365File(id: $0.path, name: "standard / \($0.lastPathComponent)")
+                    })
+                }
 
-                    let files = collectedFiles.sorted {
-                        $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
-                    }
+                if let customFiles = try? fm.contentsOfDirectory(at: customDir, includingPropertiesForKeys: nil) {
+                    let htmls = customFiles.filter { ["html", "txt"].contains($0.pathExtension.lowercased()) }
+                    collectedFiles.append(contentsOf: htmls.map {
+                        M365File(id: $0.path, name: "custom / \($0.lastPathComponent)")
+                    })
+                }
 
-                    DispatchQueue.main.async {
-                        self.m365Files = files
-                        self.isLoadingM365 = false
-                        if let sig = signature,
-                           sig.storageType == .cloudM365,
-                           let usedFileName = sig.m365FileName {
+                let files = collectedFiles.sorted {
+                    $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+                }
 
-                            // 1️⃣ CUSTOM-Datei selektieren
-                            if let customIndex = files.firstIndex(where: {
-                                $0.name.lowercased().contains("custom") &&
-                                $0.name.lowercased().contains(usedFileName.lowercased())
-                            }) {
+                DispatchQueue.main.async {
+                    self.m365Files = files
+                    self.isLoadingM365 = false
+                    if let sig = signature,
+                       sig.storageType == .cloudM365,
+                       let usedFileName = sig.m365FileName {
 
-                                self.selectedM365Index = customIndex
+                        // 1️⃣ CUSTOM-Datei selektieren
+                        if let customIndex = files.firstIndex(where: {
+                            $0.name.lowercased().contains("custom") &&
+                            $0.name.lowercased().contains(usedFileName.lowercased())
+                        }) {
 
-                                let originalURL = files[customIndex].url
-                                let cachedURL = cachedURLForExistingCustom(originalURL: originalURL)
-                                self.selectedHTMLFile = cachedURL
-                                self.loadEditableFromHTML(at: cachedURL)
+                            self.selectedM365Index = customIndex
 
-                                let cleanName = usedFileName
-                                    .replacingOccurrences(of: ".html", with: "")
-                                    .replacingOccurrences(of: ".txt", with: "")
+                            let originalURL = files[customIndex].url
+                            let cachedURL = cachedURLForExistingCustom(originalURL: originalURL)
+                            self.selectedHTMLFile = cachedURL
+                            self.loadEditableFromHTML(at: cachedURL)
 
-                                self.customSignatureName = cleanName
-                                self.originalCustomName = cleanName
+                            let cleanName = usedFileName
+                                .replacingOccurrences(of: ".html", with: "")
+                                .replacingOccurrences(of: ".txt", with: "")
 
-                            } else {
-                                // 2️⃣ FALLBACK: Nur STANDARD vorhanden
-                                self.selectedM365Index = 0
-                                self.selectedHTMLFile = files[0].url
-                                self.loadEditableFromHTML(at: files[0].url, forceNoCache: true)
-                            }
+                            self.customSignatureName = cleanName
+                            self.originalCustomName = cleanName
+
+                        } else {
+                            // 2️⃣ FALLBACK: Nur STANDARD vorhanden
+                            self.selectedM365Index = 0
+                            self.selectedHTMLFile = files[0].url
+                            self.loadEditableFromHTML(at: files[0].url, forceNoCache: true)
                         }
                     }
-                } catch {
-                    Logger.shared.log(position: "AddSignatureView.loadM365Files", type: "CRITICAL", content: "Failed to read downloaded files: \(error.localizedDescription)")
-                    DispatchQueue.main.async {
-                        self.isLoadingM365 = false
-                        self.m365Error = error.localizedDescription
-                    }
                 }
+
             }, failure: {
                 Logger.shared.log(position: "AddSignatureView.loadM365Files", type: "CRITICAL", content: "Download of M365 files failed")
                 DispatchQueue.main.async {

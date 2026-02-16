@@ -4,18 +4,18 @@
     "" : {
       "shouldTranslate" : false
     },
-    " - " : {
+    "%@ - LETS_GET_STARTED" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " - "
+            "value" : "%@ Lass uns loslegen!"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " - "
+            "value" : "%@ - Lets get Started!"
           }
         }
       }
@@ -741,22 +741,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Let’s customize your experience"
-          }
-        }
-      }
-    },
-    "LETS_GET_STARTED" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fangen wir an!"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lets get started!"
           }
         }
       }
@@ -1575,8 +1559,14 @@
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Aktualisieren: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating %@"
           }
         }
       }
@@ -1625,22 +1615,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Update"
-          }
-        }
-      }
-    },
-    "UPDATE_COMPLETED" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Update abgeschlossen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Update completed."
           }
         }
       }
@@ -1737,22 +1711,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waiting for licensing server…"
-          }
-        }
-      }
-    },
-    "WELCOME" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Willkommen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Welcome."
           }
         }
       }
