@@ -5,11 +5,11 @@
 	<key></key>
 	<string></string>
 	<key>GHApiToken</key>
-	<string>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</string>
+	<string>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?</string>
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://vegilifeag.github.io/AppleSignatureManager/appcast.xml</string>
+	<string>https://marcbuetti.github.io/macOS-SignatureManager/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>siYfD1930zKvD61TVRUHfOd0O4XN+F+V89xuTV5sREA=</string>
 </dict>

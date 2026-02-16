@@ -4,10 +4,10 @@
     "autoopen" : true,
     "background" : {
       "image" : "backgroundImage",
-      "imageScaleOption" : 50,
+      "imageScaleOption" : 100,
       "layoutObjects" : [
         {
-          "bounds" : "{{287, 127}, {117, 95}}",
+          "bounds" : "{{283, 127}, {117, 95}}",
           "identifier" : "imageObject1",
           "image" : "aoiusyovjg",
           "layoutObjectType" : "image",
@@ -26,33 +26,33 @@
     ],
     "nameFontSize" : 12,
     "statusBarVisible" : false,
-    "suggestedDiskImageName" : "Signature Manager 2.dmg",
+    "suggestedDiskImageName" : "Signature Manager.dmg",
     "teamID" : "8S2RY9PW6P",
     "toolbarVisible" : false,
     "uid" : "trcmbaujnd",
     "validationScheme" : 2,
     "viewLayout" : 0,
     "volumeIcon" : "volumeIcon",
-    "volumeName" : "Signature Manager 2",
+    "volumeName" : "Signature Manager",
     "volumeSize" : 0,
     "volumeSizeOption" : "Automatic",
     "windowContentHeight" : 384,
     "windowContents" : [
       {
-        "filePath" : "\/Users\/mkj-mb\/Documents\/Vegilife-Development\/Signature Manager 2\/Archives\/Version 3.1\/Signature Manager 2.app",
-        "iconSize" : 100,
-        "invisible" : false,
-        "isAnAlias" : false,
-        "location" : "{127, 175}",
-        "relativeFilePath" : "Archives\/Version 3.1\/Signature Manager 2.app"
-      },
-      {
         "filePath" : "\/Applications",
         "iconSize" : 100,
         "invisible" : false,
         "isAnAlias" : true,
-        "location" : "{553, 175}",
-        "relativeFilePath" : "..\/..\/..\/..\/..\/Applications"
+        "location" : "{552, 175}",
+        "relativeFilePath" : "..\/..\/..\/..\/..\/..\/..\/Applications"
+      },
+      {
+        "filePath" : "\/Users\/mkj-mb\/Documents\/Development\/macOS-SignatureManager\/Archives\/Version 4.0\/Signature Manager.app",
+        "iconSize" : 100,
+        "invisible" : false,
+        "isAnAlias" : false,
+        "location" : "{124, 175}",
+        "relativeFilePath" : "..\/..\/Archives\/Version 4.0\/Signature Manager.app"
       }
     ],
     "windowContentWidth" : 683,
