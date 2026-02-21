@@ -30,9 +30,15 @@ public final class UpdateManager: ObservableObject {
     private let workQueue = DispatchQueue(label: "com.marcbuetti.signaturemanager2.updatemanager", qos: .userInitiated)
     private var cancellables = Set<AnyCancellable>()
 
+    // Shared SwiftData context injected from App
+    private var sharedContext: ModelContext?
+    public func setModelContext(_ context: ModelContext) {
+        self.sharedContext = context
+    }
+
     public func start(remoteRequested: Bool) {
         guard isRunning == false else {
-            Logger.shared.log(position: "UPDATEMANAGER.start", type: "WARNING", content: "Start ignored: update already running")
+            LogManager.shared.log(.warning, "Start ignored: update already running", fileID: #fileID, function: #function, line: #line)
             return
         }
 
@@ -88,14 +94,6 @@ private extension UpdateManager {
         let name: String
     }
 
-    private static let sharedModelContainer: ModelContainer = {
-          do {
-              return try ModelContainer(for: Signature.self)
-          } catch {
-              fatalError("Failed to create ModelContainer for Signature: \(error)")
-          }
-      }()
-    
     func run(remoteRequested: Bool) {
         let wasMailRunning = Self.isMailRunning()
         if remoteRequested {
@@ -103,11 +101,26 @@ private extension UpdateManager {
         }
         graphService.updateRemoteStatus(status: "updating", remote: false)
 
-        let context = ModelContext(Self.sharedModelContainer)
+        let context: ModelContext
+        if let injected = sharedContext {
+            context = injected
+        } else {
+            // Fallback: try to use a default container if available
+            do {
+                let container = try ModelContainer(for: Signature.self)
+                context = ModelContext(container)
+            } catch {
+                LogManager.shared.log(.critical, "No shared ModelContext set and failed to create fallback container: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
+                finish(success: false, wasMailRunning: wasMailRunning, remoteRequested: remoteRequested)
+                return
+            }
+        }
+
         let jobs = loadJobs(using: context)
         
         if jobs.isEmpty {
             NotificationManager.notification(title: "No Signatures to update", body: "There are no Signatures available to update.")
+            LogManager.shared.log(.info, "No Signatures to update: \(jobs)", fileID: #fileID, function: #function, line: #line)
             finish(success: true, wasMailRunning: wasMailRunning, remoteRequested: remoteRequested)
             return
         }
@@ -136,7 +149,7 @@ private extension UpdateManager {
         for (index, job) in jobs.enumerated() {
             //updateStatus("Updating: \(job.name)" + (remoteRequested ? " (requested by your organization)" : ""))
             if updateMailSignature(signatureId: job.id, htmlPath: job.htmlPath) == false {
-                Logger.shared.log(position: "UPDATE.processJobs", type: "CRITICAL", content: "Job failed for id=\(job.id), name=\"\(job.name)\"")
+                LogManager.shared.log(.critical, "Job failed for id=\(job.id), name=\"\(job.name)\"", fileID: #fileID, function: #function, line: #line)
                 //self.notifyUpdateFailure(body: "Updating signature \(job.name) failed. The last changes were not applied.")
                 ok = false
                 break
@@ -204,48 +217,55 @@ private extension UpdateManager {
         do {
             signatures = try context.fetch(descriptor)
         } catch {
-            Logger.shared.log(
-                position: "UPDATE.loadJobs",
-                type: "CRITICAL",
-                content: "SwiftData fetch failed: \(error.localizedDescription)"
-            )
+            LogManager.shared.log(.critical, "SwiftData fetch failed: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             return []
         }
 
+        print("\n========== LOADJOBS START ==========")
+        print("SwiftData returned \(signatures.count) signatures\n")
+
         for sig in signatures {
+
+            print("---- CHECKING SIGNATURE ----")
+            print("Name: \(sig.name)")
+            print("ID: \(sig.mailSignatureId)")
+            print("HTML Path: \(sig.htmlPath)")
+            print("StorageType: \(sig.storageType)")
+            print("-----------------------------")
+
             let id = sig.mailSignatureId
             let name = sig.name
             let htmlPath = (sig.htmlPath as NSString).expandingTildeInPath
 
             guard !id.isEmpty, !name.isEmpty, !htmlPath.isEmpty else {
-                Logger.shared.log(
-                    position: "UPDATE.loadJobs",
-                    type: "WARNING",
-                    content: "Skipping signature with missing data: \(sig)"
-                )
+                print("❌ Skipped: Missing basic data\n")
                 continue
             }
 
-            if FileManager.default.fileExists(atPath: htmlPath) == false {
+            // 🔎 Check HTML
+            let htmlExists = FileManager.default.fileExists(atPath: htmlPath)
+            print("HTML exists: \(htmlExists)")
+
+            if htmlExists == false {
                 missingHTMLNames.append(name)
-                Logger.shared.log(
-                    position: "VALIDATE.loadJobs",
-                    type: "CRITICAL",
-                    content: "Missing HTML file for signature \"\(name)\" @ \(htmlPath)"
-                )
+                print("❌ Missing HTML file -> filtered\n")
                 continue
             }
 
+            // 🔎 Check Mail Signature File
             let signaturePath = Self.signatureFilePath(for: id)
-            if FileManager.default.fileExists(atPath: signaturePath) == false {
+            let mailFileExists = FileManager.default.fileExists(atPath: signaturePath)
+
+            print("Mail file path: \(signaturePath)")
+            print("Mail file exists: \(mailFileExists)")
+
+            if mailFileExists == false {
                 missingSignatureFiles.append(name)
-                Logger.shared.log(
-                    position: "VALIDATE.loadJobs",
-                    type: "CRITICAL",
-                    content: "Missing .mailsignature for id=\(id) (name=\"\(name)\") @ \(signaturePath)"
-                )
+                print("❌ Missing .mailsignature file -> filtered\n")
                 continue
             }
+
+            print("✅ Signature added to jobs\n")
 
             list.append(
                 SignatureJob(
@@ -256,16 +276,15 @@ private extension UpdateManager {
             )
         }
 
+        print("FINAL JOB COUNT: \(list.count)")
+        print("====================================\n")
+
         if !missingHTMLNames.isEmpty {
-            let msg = "These signatures have no HTML file: \(missingHTMLNames.joined(separator: ", "))"
-            delegate?.updateManager(self, showInfo: "Missing HTML files", message: msg)
-            Logger.shared.log(position: "VALIDATE.loadJobs", type: "CRITICAL", content: msg)
+            print("⚠️ Missing HTML for: \(missingHTMLNames)")
         }
 
         if !missingSignatureFiles.isEmpty {
-            let msg = "These signatures have no .mailsignature file: \(missingSignatureFiles.joined(separator: ", "))"
-            delegate?.updateManager(self, showInfo: "Missing signature files", message: msg)
-            Logger.shared.log(position: "VALIDATE.loadJobs", type: "CRITICAL", content: msg)
+            print("⚠️ Missing MAIL FILE for: \(missingSignatureFiles)")
         }
 
         return list
@@ -300,7 +319,7 @@ private extension UpdateManager {
             _ = Self.runShell("chflags uchg \(Self.esc(sigPath))")
             return true
         } catch {
-            Logger.shared.log(position: "MAIL.updateMailSignature", type: "CRITICAL", content: "Update failed for id=\(signatureId): \(error.localizedDescription)")
+            LogManager.shared.log(.critical, "Update failed for id=\(signatureId): \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             return false
         }
     }
@@ -396,7 +415,7 @@ private extension UpdateManager {
         _ = String(data: out.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
     
         if !errStr.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            Logger.shared.log(position: "SHELL.runShell", type: "CRITICAL", content: "stderr: \(errStr)")
+            LogManager.shared.log(.critical, "stderr: \(errStr)", fileID: #fileID, function: #function, line: #line)
             return false
         }
         return true
@@ -423,7 +442,7 @@ private extension UpdateManager {
         let center = UNUserNotificationCenter.current()
         center.getNotificationSettings { settings in
             guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else {
-                Logger.shared.log(position: "UpdateManager.notifyUpdateFailure", type: "WARNING", content: "Notification not authorized; skipping failure notification")
+                LogManager.shared.log(.warning, "Notification not authorized; skipping failure notification", fileID: #fileID, function: #function, line: #line)
                 return
             }
             let content = UNMutableNotificationContent()
@@ -433,7 +452,7 @@ private extension UpdateManager {
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
             UNUserNotificationCenter.current().add(request) { error in
                 if let error = error {
-                    Logger.shared.log(position: "UpdateManager.notifyUpdateFailure", type: "CRITICAL", content: "Failed to schedule failure notification: \(error.localizedDescription)")
+                    LogManager.shared.log(.critical, "Failed to schedule failure notification: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 }
             }
         }

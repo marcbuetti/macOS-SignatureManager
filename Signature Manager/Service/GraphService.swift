@@ -30,9 +30,7 @@ class GraphService {
     
     func getAccessToken(completion: @escaping (String?) -> Void) {
         
-        Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "Requesting access token for tenant: \(tenantId.prefix(6))... and client: \(clientId.prefix(6))...")
-        
-        //print(clientId, tenantId, clientSecret, sharepointDomain, siteId, driveName, baseFolderName)
+        //Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "Requesting access token for tenant: \(tenantId.prefix(6))... and client: \(clientId.prefix(6))...")
         
         let url = URL(string: "https://login.microsoftonline.com/\(tenantId)/oauth2/v2.0/token")!
         let parameters = [
@@ -47,24 +45,24 @@ class GraphService {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = bodyData
         
-        Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "POST \(url.absoluteString)")
+        //Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "POST \(url.absoluteString)")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             
-            Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "Received response: status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
+            //Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "Received response: status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
             
             guard let data = data, error == nil else {
-                Logger.shared.log(position: "GraphService.getAccessToken", type: "CRITICAL", content: "Error fetching Access Token: \(error?.localizedDescription ?? "Unknown error")")
+                LogManager.shared.log(.critical, "Error fetching Access Token: \(error?.localizedDescription ?? "Unknown error")", fileID: #fileID, function: #function, line: #line)
                 completion(nil)
                 return
             }
             
             if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                let accessToken = json["access_token"] as? String {
-                Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "Access token received (length=\(accessToken.count))")
+                //Logger.shared.log(position: "GraphService.getAccessToken", type: "DEBUG", content: "Access token received (length=\(accessToken.count))")
                 completion(accessToken)
             } else {
-                Logger.shared.log(position: "GraphService.getAccessToken", type: "CRITICAL", content: "Error parsing Access Token response")
+                LogManager.shared.log(.critical, "Error parsing Access Token response", fileID: #fileID, function: #function, line: #line)
                 completion(nil)
             }
         }
@@ -79,11 +77,11 @@ class GraphService {
             let exp = TimeInterval(cachedAccessTokenExpiration),
             Date().timeIntervalSince1970 < exp - 60 // 60s Sicherheit
         {
-            Logger.shared.log(
+            /*Logger.shared.log(
                 position: "GraphService.getValidAccessToken",
                 type: "DEBUG",
                 content: "Using cached access token"
-            )
+            )*/
             completion(cachedAccessToken)
             return
         }
@@ -105,11 +103,11 @@ class GraphService {
                 self.cachedAccessToken = token
                 self.cachedAccessTokenExpiration = String(exp)
 
-                Logger.shared.log(
+                /*Logger.shared.log(
                     position: "GraphService.getValidAccessToken",
                     type: "DEBUG",
                     content: "Cached new access token (exp=\(exp))"
-                )
+                )*/
             }
 
             completion(token)
@@ -119,20 +117,20 @@ class GraphService {
     //MARK: SITE ID
     
     func getSiteId(accessToken: String, siteId: String, domain: String, completion: @escaping (String?) -> Void) {
-        Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "Resolving siteId for sitePath=\(siteId) on domain=\(domain)")
+        //Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "Resolving siteId for sitePath=\(siteId) on domain=\(domain)")
         let url = URL(string: "https://graph.microsoft.com/v1.0/sites/\(domain):/sites/\(siteId)")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
-        Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "GET \(url.absoluteString)")
+        //Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "GET \(url.absoluteString)")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             
-            Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
+            //Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
             
             guard let data = data, error == nil else {
-                Logger.shared.log(position: "GraphService.getSiteId", type: "CRITICAL", content: "Error fetching Site ID: \(error?.localizedDescription ?? "Unknown error")")
+                LogManager.shared.log(.critical, "Error fetching Site ID \(error?.localizedDescription ?? "Unknown error")", fileID: #fileID, function: #function, line: #line)
                 completion(nil)
                 return
             }
@@ -140,14 +138,14 @@ class GraphService {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                    let siteId = json["id"] as? String {
-                    Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "Resolved site id: \(siteId)")
+                    //Logger.shared.log(position: "GraphService.getSiteId", type: "DEBUG", content: "Resolved site id: \(siteId)")
                     completion(siteId)
                 } else {
-                    Logger.shared.log(position: "GraphService.getSiteId", type: "CRITICAL", content: "Error parsing Site ID response.")
+                    LogManager.shared.log(.critical, "Error parsing Site ID response.", fileID: #fileID, function: #function, line: #line)
                     completion(nil)
                 }
             } catch {
-                Logger.shared.log(position: "GraphService.getSiteId", type: "CRITICAL", content: "JSON Parsing Error: \(error.localizedDescription)")
+                LogManager.shared.log(.critical, "Error parsing Site ID response: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 completion(nil)
             }
         }
@@ -157,30 +155,30 @@ class GraphService {
     //MARK: DRIVE ID
     
     private func getDriveId(accessToken: String, siteId: String, completion: @escaping (String?) -> Void) {
-        Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "Fetching drive id for siteId=\(siteId)")
+        //Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "Fetching drive id for siteId=\(siteId)")
         let url = URL(string: "https://graph.microsoft.com/v1.0/sites/\(siteId)/drive")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
-        Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "GET \(url.absoluteString)")
+        //Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "GET \(url.absoluteString)")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             
-            Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
+            //Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
             
             guard let data = data, error == nil else {
-                Logger.shared.log(position: "GraphService.getDriveId", type: "CRITICAL", content: "Error fetching Drive ID: \(error?.localizedDescription ?? "Unknown error")")
+                LogManager.shared.log(.critical, "Error fetching Drive ID: \(error?.localizedDescription ?? "Unknown error")", fileID: #fileID, function: #function, line: #line)
                 completion(nil)
                 return
             }
             
             if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                let driveId = json["id"] as? String {
-                Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "Resolved drive id: \(driveId)")
+                //Logger.shared.log(position: "GraphService.getDriveId", type: "DEBUG", content: "Resolved drive id: \(driveId)")
                 completion(driveId)
             } else {
-                Logger.shared.log(position: "GraphService.getDriveId", type: "CRITICAL", content: "Error parsing Drive ID response.")
+                LogManager.shared.log(.critical, "Error parsing Drive ID response.", fileID: #fileID, function: #function, line: #line)
                 completion(nil)
             }
         }
@@ -190,26 +188,27 @@ class GraphService {
     //MARK: REMOTE MANAGEMENT
     
     func checkConnection(debug: Bool = false, completion: @escaping (Bool, String?) -> Void = { _, _ in }) {
-        Logger.shared.log(position: "GraphService.checkConnection", type: "DEBUG", content: "Checking Graph connectivity...")
+        //Logger.shared.log(position: "GraphService.checkConnection", type: "DEBUG", content: "Checking Graph connectivity...")
         getValidAccessToken { accessToken in
             guard let accessToken = accessToken else {
                 if debug {
-                    Logger.shared.log(position: "GraphService.checkConnection", type: "WARNING", content: "Unable to authenticate with Graph")
+                    LogManager.shared.log(.critical, "Unable to authenticate with Graph", fileID: #fileID, function: #function, line: #line)
                 }
                 completion(false, nil)
                 return
             }
             
-            Logger.shared.log(position: "GraphService.checkConnection", type: "DEBUG", content: "Access token acquired. Resolving site...")
+            //Logger.shared.log(position: "GraphService.checkConnection", type: "DEBUG", content: "Access token acquired. Resolving site...")
             
             self.getSiteId(accessToken: accessToken, siteId: self.siteId, domain: self.sharepointDomain) { siteId in
                 if siteId != nil {
                     // Removed info log for siteId availability
-                    Logger.shared.log(position: "GraphService.checkConnection", type: "DEBUG", content: "Connection OK. Site resolved.")
+                    //Logger.shared.log(position: "GraphService.checkConnection", type: "DEBUG", content: "Connection OK. Site resolved.")
                     completion(true, accessToken)
                 } else {
                     if debug {
-                        Logger.shared.log(position: "GraphService.checkConnection", type: "WARNING", content: "Unable to fetch Site ID")
+
+                        LogManager.shared.log(.critical, "Unable to fetch Site ID", fileID: #fileID, function: #function, line: #line)
                     }
                     completion(false, nil)
                 }
@@ -218,7 +217,7 @@ class GraphService {
     }
     
     func reigsterRemoteDevice() {
-        Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Registering device if needed...")
+        //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Registering device if needed...")
         checkConnection { isAvailable, accessToken in
             guard isAvailable, let accessToken = accessToken else {
                 DispatchQueue.main.async {
@@ -242,27 +241,27 @@ class GraphService {
             
             self.getSiteId(accessToken: accessToken, siteId: self.siteId, domain: self.sharepointDomain) { siteId in
                 guard let siteId = siteId else {
-                    Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "CRITICAL", content: "Error: Unable to fetch Site ID.")
+                    LogManager.shared.log(.critical, "Error: Unable to fetch Site ID.", fileID: #fileID, function: #function, line: #line)
                     return
                 }
                 let deviceName = Host.current().localizedName ?? "Unknown Device"
-                Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Device name: \(deviceName)")
+                //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Device name: \(deviceName)")
                 let listItemsUrl = URL(string: "https://graph.microsoft.com/v1.0/sites/\(siteId)/lists/\(self.smaSyncList)/items?$expand=fields")!
-                Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
+                //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
                 var listRequest = URLRequest(url: listItemsUrl)
                 listRequest.httpMethod = "GET"
                 listRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
                 
                 let task = URLSession.shared.dataTask(with: listRequest) { data, response, error in
-                    Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "List response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
+                    //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "List response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
                     guard let data = data, error == nil else {
-                        Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "CRITICAL", content: "Error fetching list entries: \(error?.localizedDescription ?? "Unknown error")")
+                        LogManager.shared.log(.critical, "Error fetching list entries: \(error?.localizedDescription ?? "Unknown error")", fileID: #fileID, function: #function, line: #line)
                         return
                     }
                     
                     if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                        let items = json["value"] as? [[String: Any]] {
-                        Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Fetched \(items.count) list items")
+                        //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Fetched \(items.count) list items")
                         
                         let existingItem = items.first { item in
                             if let fields = item["fields"] as? [String: Any],
@@ -273,7 +272,7 @@ class GraphService {
                         }
                         
                         if existingItem != nil {
-                            Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Device already registered. Skipping create.")
+                            //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Device already registered. Skipping create.")
                             return
                         }
                         
@@ -298,18 +297,18 @@ class GraphService {
                         addRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                         addRequest.httpBody = try? JSONSerialization.data(withJSONObject: newDeviceData, options: [])
                         
-                        Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "POST new device to list")
+                        //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "POST new device to list")
                         
                         let addTask = URLSession.shared.dataTask(with: addRequest) { data, response, error in
                             if let error = error {
-                                Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "CRITICAL", content: "Error registering device: \(error.localizedDescription)")
+                                LogManager.shared.log(.critical, "Error registering device: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                                 return
                             }
-                            Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Device registration request sent.")
+                            //Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "DEBUG", content: "Device registration request sent.")
                         }
                         addTask.resume()
                     } else {
-                        Logger.shared.log(position: "GraphService.reigsterRemoteDevice", type: "CRITICAL", content: "Error parsing list entries.")
+                        LogManager.shared.log(.critical, "Error registering device", fileID: #fileID, function: #function, line: #line)
                     }
                 }
                 task.resume()
@@ -318,56 +317,56 @@ class GraphService {
     }
     
     func fetchRemoteUser(completion: @escaping (String?) -> Void) {
-        Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Fetching assigned remote user for this device...")
+        //Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Fetching assigned remote user for this device...")
         checkConnection { isAvailable, accessToken in
             guard isAvailable, let accessToken = accessToken else {
-                Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "CRITICAL", content: "Unable to connect to Microsoft365")
+                LogManager.shared.log(.critical, "Unable to connect to Microsoft 365", fileID: #fileID, function: #function, line: #line)
                 return
             }
             
             self.getSiteId(accessToken: accessToken, siteId: self.siteId, domain: self.sharepointDomain) { siteId in
                 guard let siteId = siteId else {
-                    Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "CRITICAL", content: "Unable to fetch Site ID.")
+                    LogManager.shared.log(.critical, "Unable to fetch Site ID", fileID: #fileID, function: #function, line: #line)
                     completion(nil)
                     return
                 }
                 
                 let deviceName = Host.current().localizedName ?? "Unknown Device"
-                Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Device name: \(deviceName)")
+                //Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Device name: \(deviceName)")
                 let listItemsUrl = URL(string: "https://graph.microsoft.com/v1.0/sites/\(siteId)/lists/\(self.smaSyncList)/items?$expand=fields")!
-                Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
+                //Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
                 var listRequest = URLRequest(url: listItemsUrl)
                 listRequest.httpMethod = "GET"
                 listRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
                 
                 let task = URLSession.shared.dataTask(with: listRequest) { data, response, error in
-                    Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
+                    //Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
                     guard let data = data, error == nil else {
-                        Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "CRITICAL", content: "Error fetching SharePoint list items: \(error?.localizedDescription ?? "Unknown error")")
+                        LogManager.shared.log(.critical, "Error fetching SharePoint list items: \(error?.localizedDescription ?? "Unknown error")", fileID: #fileID, function: #function, line: #line)
                         completion(nil)
                         return
                     }
                     
                     if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                        let items = json["value"] as? [[String: Any]] {
-                        Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Scanned \(items.count) list items for device match")
+                        //Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Scanned \(items.count) list items for device match")
                         for item in items {
                             if let fields = item["fields"] as? [String: Any],
                                let deviceNameField = fields["DeviceName"] as? String,
                                deviceNameField.caseInsensitiveCompare(deviceName) == .orderedSame {
                                 if let assignedUser = fields["User"] as? String {
-                                    Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Assigned user found: \(assignedUser)")
+                                    //Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "DEBUG", content: "Assigned user found: \(assignedUser)")
                                     completion(assignedUser)
                                     return
                                 } else {
-                                    Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "WARNING", content: "No 'User' field found for device '\(deviceName)'.")
+                                    LogManager.shared.log(.critical, "No 'User' field found for device '\(deviceName)'.", fileID: #fileID, function: #function, line: #line)
                                 }
                             }
                         }
-                        Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "WARNING", content: "Device '\(deviceName)' not found in SharePoint list.")
+                        LogManager.shared.log(.critical, "Device '\(deviceName)' not found in SharePoint list.", fileID: #fileID, function: #function, line: #line)
                         completion(nil)
                     } else {
-                        Logger.shared.log(position: "GraphService.fetchRemoteUser", type: "CRITICAL", content: "Error parsing SharePoint list items.")
+                        LogManager.shared.log(.critical, "Error parsing SharePoint list items.", fileID: #fileID, function: #function, line: #line)
                         completion(nil)
                     }
                 }
@@ -377,33 +376,33 @@ class GraphService {
     }
     
     func updateRemoteStatus(status: String, remote: Bool, completion: @escaping () -> Void = {}) {
-        Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Updating remote status to '\(status)' (requestor=\(remote ? "remote" : "local"))")
+        //Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Updating remote status to '\(status)' (requestor=\(remote ? "remote" : "local"))")
         checkConnection { isAvailable, accessToken in
             guard isAvailable, let accessToken = accessToken else {
-                Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "CRITICAL", content: "Unable to connect to Microsoft365")
+                LogManager.shared.log(.critical, "Unable to connect to Microsoft365", fileID: #fileID, function: #function, line: #line)
                 completion()
                 return
             }
             
             self.getSiteId(accessToken: accessToken, siteId: self.siteId, domain: self.sharepointDomain) { siteId in
                 guard let siteId = siteId else {
-                    Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "CRITICAL", content: "Unable to fetch Site ID.")
+                    LogManager.shared.log(.critical, "Unable to fetch Site ID", fileID: #fileID, function: #function, line: #line)
                     completion()
                     return
                 }
                 
                 let deviceName = Host.current().localizedName ?? "Unknown Device"
-                Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Device name: \(deviceName)")
+                //Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Device name: \(deviceName)")
                 let listItemsUrl = URL(string: "https://graph.microsoft.com/v1.0/sites/\(siteId)/lists/\(self.smaSyncList)/items?$expand=fields")!
-                Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
+                //Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
                 var listRequest = URLRequest(url: listItemsUrl)
                 listRequest.httpMethod = "GET"
                 listRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
                 
                 let task = URLSession.shared.dataTask(with: listRequest) { data, response, error in
-                    Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
+                    //Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
                     guard let data = data, error == nil else {
-                        Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "CRITICAL", content: "Error fetching list entries: \(error?.localizedDescription ?? "Unknown error")")
+                        LogManager.shared.log(.critical, "Error fetching list entries: \(error?.localizedDescription ?? "Unknown error")", fileID: #fileID, function: #function, line: #line)
                         completion()
                         return
                     }
@@ -419,7 +418,7 @@ class GraphService {
                             return false
                         }
                         
-                        Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: existingItem != nil ? "Existing item found. Updating fields..." : "No existing item for device.")
+                        //Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: existingItem != nil ? "Existing item found. Updating fields..." : "No existing item for device.")
                         
                         if let existingItem = existingItem, let itemId = existingItem["id"] as? String {
                             let dateFormatter = DateFormatter()
@@ -434,7 +433,7 @@ class GraphService {
                             ]
                             
                             let updateUrl = URL(string: "https://graph.microsoft.com/v1.0/sites/\(siteId)/lists/\(self.smaSyncList)/items/\(itemId)/fields")!
-                            Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "PATCH \(updateUrl.absoluteString)")
+                            //Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "PATCH \(updateUrl.absoluteString)")
                             var updateRequest = URLRequest(url: updateUrl)
                             updateRequest.httpMethod = "PATCH"
                             updateRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
@@ -443,9 +442,9 @@ class GraphService {
                             
                             let updateTask = URLSession.shared.dataTask(with: updateRequest) { data, response, error in
                                 if let error = error {
-                                    Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "CRITICAL", content: "Error updating device: \(error.localizedDescription)")
+                                    LogManager.shared.log(.critical, "Error updating device: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                                 } else {
-                                    Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Update successful. Timestamp updated.")
+                                    //Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "DEBUG", content: "Update successful. Timestamp updated.")
                                     let tsFormatter = DateFormatter()
                                     tsFormatter.dateFormat = "dd.MM.yyyy - HH:mm"
                                     self.lastUpdateTimestamp = tsFormatter.string(from: Date())
@@ -454,11 +453,11 @@ class GraphService {
                             }
                             updateTask.resume()
                         } else {
-                            Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "WARNING", content: "Device '\(deviceName)' not found in SharePoint list. No updates made.")
+                            LogManager.shared.log(.critical, "Device '\(deviceName)' not found in SharePoint list. No updates made.", fileID: #fileID, function: #function, line: #line)
                             completion()
                         }
                     } else {
-                        Logger.shared.log(position: "GraphService.updateRemoteStatus", type: "CRITICAL", content: "Error parsing list entries.")
+                        LogManager.shared.log(.critical, "Error parsing list entries.", fileID: #fileID, function: #function, line: #line)
                         completion()
                     }
                 }
@@ -468,9 +467,9 @@ class GraphService {
     }
     
     func startRemoteUpdateChecker() {
-        Logger.shared.log(position: "GraphService.startRemoteUpdateChecker", type: "DEBUG", content: "Starting remote update checker loop (interval=\(updateInterval)s)")
+        //Logger.shared.log(position: "GraphService.startRemoteUpdateChecker", type: "DEBUG", content: "Starting remote update checker loop (interval=\(updateInterval)s)")
         guard !isRunning else {
-            Logger.shared.log(position: "GraphService.startRemoteUpdateChecker", type: "WARNING", content: "Cant start remoteChecking while already running.")
+            LogManager.shared.log(.warning, "Cant start remoteChecking while already running.", fileID: #fileID, function: #function, line: #line)
             return
         }
         
@@ -485,42 +484,42 @@ class GraphService {
     }
     
     func stopRemoteUpdateChecker() {
-        Logger.shared.log(position: "GraphService.stopRemoteUpdateChecker", type: "DEBUG", content: "Stopping remote update checker loop")
+        //Logger.shared.log(position: "GraphService.stopRemoteUpdateChecker", type: "DEBUG", content: "Stopping remote update checker loop")
         isRunning = false
     }
     
     private func remoteUpdateCheckerCheck() {
         let currentDeviceName = Host.current().localizedName ?? "Unknown Device"
-        Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Polling remote updates for device: \(currentDeviceName)")
+        //Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Polling remote updates for device: \(currentDeviceName)")
         
         checkConnection { isAvailable, accessToken in
             guard isAvailable, let accessToken = accessToken else {
-                Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "CRITICAL", content: "Unable to connect to Microsoft365")
+                LogManager.shared.log(.critical, "Unable to connect to Microsoft 365", fileID: #fileID, function: #function, line: #line)
                 return
             }
             
             self.getSiteId(accessToken: accessToken, siteId: self.siteId, domain: self.sharepointDomain) { siteId in
                 guard let siteId = siteId else {
-                    Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "CRITICAL", content: "Unable to fetch Site ID.")
+                    LogManager.shared.log(.critical, "Unable to fetch Site ID.", fileID: #fileID, function: #function, line: #line)
                     return
                 }
                 
                 let listItemsUrl = URL(string: "https://graph.microsoft.com/v1.0/sites/\(siteId)/lists/Devices/items?$expand=fields")!
-                Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
+                //Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "GET \(listItemsUrl.absoluteString)")
                 var listRequest = URLRequest(url: listItemsUrl)
                 listRequest.httpMethod = "GET"
                 listRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
                 
                 let task = URLSession.shared.dataTask(with: listRequest) { data, response, error in
-                    Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
+                    //Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)")
                     guard let data = data, error == nil else {
-                        Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "CRITICAL", content: "Error fetching list entries: \(error?.localizedDescription ?? "Unknown error")")
+                        LogManager.shared.log(.critical, "Error fetching list entries: \(error?.localizedDescription ?? "Unknown error")", fileID: #fileID, function: #function, line: #line)
                         return
                     }
                     
                     if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                        let items = json["value"] as? [[String: Any]] {
-                        Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Fetched \(items.count) items. Filtering for remote requests...")
+                        //Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Fetched \(items.count) items. Filtering for remote requests...")
                         
                         let matchingItems = items.filter { item in
                             if let fields = item["fields"] as? [String: Any],
@@ -534,17 +533,17 @@ class GraphService {
                             return false
                         }
                         
-                        Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Found \(matchingItems.count) matching remote requests")
+                        //Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "DEBUG", content: "Found \(matchingItems.count) matching remote requests")
                         
                         for matchingItem in matchingItems {
                             if let fields = matchingItem["fields"] as? [String: Any],
                                let deviceName = fields["DeviceName"] as? String {
-                                Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "WARNING", content: "Processing remote update for device: \(deviceName)")
+                                LogManager.shared.log(.info, "Processing remote update for device: \(deviceName)", fileID: #fileID, function: #function, line: #line)
                                 self.handleRemoteUpdate(for: deviceName)
                             }
                         }
                     } else {
-                        Logger.shared.log(position: "GraphService.remoteUpdateCheckerCheck", type: "CRITICAL", content: "Error parsing list entries.")
+                        LogManager.shared.log(.critical, "Error parsing list entries.", fileID: #fileID, function: #function, line: #line)
                     }
                 }
                 task.resume()
@@ -553,19 +552,19 @@ class GraphService {
     }
     
     private func handleRemoteUpdate(for deviceName: String) {
-        Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "WARNING", content: "Handling remote update for device: \(deviceName)")
+        //Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "WARNING", content: "Handling remote update for device: \(deviceName)")
         stopRemoteUpdateChecker()
-        Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "DEBUG", content: "Paused checker. Scheduling update tasks...")
+        //Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "DEBUG", content: "Paused checker. Scheduling update tasks...")
         DispatchQueue.main.asyncAfter(deadline: .now() + 30) {
             DispatchQueue.main.async {
                 UserDefaults.standard.set(true, forKey: "isRemoteUpdate")
-                Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "DEBUG", content: "Starting update manager (remoteRequested=true)")
+                //Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "DEBUG", content: "Starting update manager (remoteRequested=true)")
                 UpdateManager.shared.start(remoteRequested: true)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 30) {
                     let tsFormatter = DateFormatter()
                     tsFormatter.dateFormat = "dd.MM.yyyy - HH:mm"
                     self.lastUpdateTimestamp = tsFormatter.string(from: Date())
-                    Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "DEBUG", content: "Update finished. Marking status idle and resuming checker")
+                    //Logger.shared.log(position: "GraphService.handleRemoteUpdate", type: "DEBUG", content: "Update finished. Marking status idle and resuming checker")
                     self.updateRemoteStatus(status: "idle", remote: false)
                     self.startRemoteUpdateChecker()
                 }
@@ -577,19 +576,19 @@ class GraphService {
     
     func fetchSubfolderContentsAndDownload(fromMacOSFolder folderName: String, success: @escaping () -> Void, failure: @escaping () -> Void) {
         
-        Logger.shared.log(position: "GraphService.fetchSubfolderContentsAndDownload", type: "DEBUG", content: "Downloading remote subfolders for macOS folder: \(folderName)")
+        //Logger.shared.log(position: "GraphService.fetchSubfolderContentsAndDownload", type: "DEBUG", content: "Downloading remote subfolders for macOS folder: \(folderName)")
         _ = FileManagerHelper().backupAllHTMLFiles()
 
         checkConnection { isAvailable, accessToken in
             guard isAvailable, let accessToken = accessToken else {
-                Logger.shared.log(position: "GraphService.fetchSubfolderContentsAndDownload", type: "CRITICAL", content: "Unable to connect to Microsoft 365")
+                //Logger.shared.log(position: "GraphService.fetchSubfolderContentsAndDownload", type: "CRITICAL", content: "Unable to connect to Microsoft 365")
                 failure()
                 return
             }
 
             self.fetchRemoteUser { userFolder in
                 guard let userFolder = userFolder else {
-                    Logger.shared.log(position: "GraphService.fetchSubfolderContentsAndDownload", type: "CRITICAL", content: "No user folder assigned.")
+                    LogManager.shared.log(.critical, "No user folder assigned.", fileID: #fileID, function: #function, line: #line)
                     failure()
                     return
                 }
@@ -617,7 +616,7 @@ class GraphService {
                 )
 
                 group.notify(queue: .main) {
-                    Logger.shared.log(position: "GraphService.fetchSubfolderContentsAndDownload", type: "DEBUG", content: "Finished downloading both subfolders")
+                    //Logger.shared.log(position: "GraphService.fetchSubfolderContentsAndDownload", type: "DEBUG", content: "Finished downloading both subfolders")
                     success()
                 }
             }
@@ -632,19 +631,15 @@ class GraphService {
         success: @escaping () -> Void,
         failure: @escaping () -> Void
     ) {
-        Logger.shared.log(
+        /*Logger.shared.log(
             position: "GraphService._downloadUserSubfolder",
             type: "DEBUG",
             content: "Downloading remoteFolder='\(remoteFolder)' for user='\(userFolder)'"
-        )
+        )*/
 
         resolveUserMacOSFolderId(accessToken: accessToken, username: userFolder) { userFolderId in
             guard let userFolderId else {
-                Logger.shared.log(
-                    position: "GraphService._downloadUserSubfolder",
-                    type: "CRITICAL",
-                    content: "User folder ID not resolved"
-                )
+                LogManager.shared.log(.critical, "User folder ID not resolved", fileID: #fileID, function: #function, line: #line)
                 failure()
                 return
             }
@@ -659,11 +654,11 @@ class GraphService {
                     let userChildrenUrl =
                     "https://graph.microsoft.com/v1.0/sites/\(siteId)/drives/\(driveId)/items/\(userFolderId)/children"
 
-                    Logger.shared.log(
+                    /*Logger.shared.log(
                         position: "GraphService._downloadUserSubfolder",
                         type: "DEBUG",
                         content: "GET \(userChildrenUrl)"
-                    )
+                    )*/
 
                     var request = URLRequest(url: URL(string: userChildrenUrl)!)
                     request.httpMethod = "GET"
@@ -677,11 +672,7 @@ class GraphService {
                             let remoteFolderEntry = folders.first(where: { ($0["name"] as? String) == remoteFolder }),
                             let remoteFolderId = remoteFolderEntry["id"] as? String
                         else {
-                            Logger.shared.log(
-                                position: "GraphService._downloadUserSubfolder",
-                                type: "CRITICAL",
-                                content: "Remote folder '\(remoteFolder)' not found"
-                            )
+                            LogManager.shared.log(.critical, "Remote folder '\(remoteFolder)' not found", fileID: #fileID, function: #function, line: #line)
                             failure()
                             return
                         }
@@ -690,11 +681,11 @@ class GraphService {
                         let filesUrl =
                         "https://graph.microsoft.com/v1.0/sites/\(siteId)/drives/\(driveId)/items/\(remoteFolderId)/children"
 
-                        Logger.shared.log(
+                        /*Logger.shared.log(
                             position: "GraphService._downloadUserSubfolder",
                             type: "DEBUG",
                             content: "GET \(filesUrl)"
-                        )
+                        )*/
 
                         var filesRequest = URLRequest(url: URL(string: filesUrl)!)
                         filesRequest.httpMethod = "GET"
@@ -710,11 +701,11 @@ class GraphService {
                                 return
                             }
 
-                            Logger.shared.log(
+                            /*Logger.shared.log(
                                 position: "GraphService._downloadUserSubfolder",
                                 type: "DEBUG",
                                 content: "Found \(files.count) files in \(remoteFolder)"
-                            )
+                            )*/
 
                             let appSupport = FileManager.default.urls(
                                 for: .applicationSupportDirectory,
@@ -740,11 +731,11 @@ class GraphService {
                                 let fileUrl =
                                 "https://graph.microsoft.com/v1.0/sites/\(siteId)/drives/\(driveId)/items/\(fileId)/content"
 
-                                Logger.shared.log(
+                                /*Logger.shared.log(
                                     position: "GraphService._downloadUserSubfolder",
                                     type: "DEBUG",
                                     content: "Downloading file: \(fileName)"
-                                )
+                                )*/
 
                                 var fileRequest = URLRequest(url: URL(string: fileUrl)!)
                                 fileRequest.httpMethod = "GET"
@@ -759,11 +750,11 @@ class GraphService {
                             }
 
                             group.notify(queue: .main) {
-                                Logger.shared.log(
+                                /*Logger.shared.log(
                                     position: "GraphService._downloadUserSubfolder",
                                     type: "DEBUG",
                                     content: "Finished downloading \(remoteFolder)"
-                                )
+                                )*/
                                 success()
                             }
                         }.resume()
@@ -779,7 +770,7 @@ class GraphService {
         success: @escaping () -> Void,
         failure: @escaping () -> Void
     ) {
-        Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Uploading file to remote: \(specificFile.lastPathComponent) for userFolder: \(remoteAppDataUserFolder)")
+        //Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Uploading file to remote: \(specificFile.lastPathComponent) for userFolder: \(remoteAppDataUserFolder)")
         checkConnection { isAvailable, accessToken in
             guard isAvailable, let accessToken else { failure(); return }
 
@@ -792,22 +783,22 @@ class GraphService {
                     self.getDriveId(accessToken: accessToken, siteId: siteId) { driveId in
                         guard let driveId else { failure(); return }
 
-                        Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Preparing PUT upload URL")
+                        //Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Preparing PUT upload URL")
                         let uploadUrl =
                         "https://graph.microsoft.com/v1.0/sites/\(siteId)/drives/\(driveId)/items/\(userFolderId):/\(specificFile.lastPathComponent):/content"
-                        Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "PUT \(uploadUrl)")
+                        //Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "PUT \(uploadUrl)")
                         var request = URLRequest(url: URL(string: uploadUrl)!)
                         request.httpMethod = "PUT"
                         request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
                         request.httpBody = try? Data(contentsOf: specificFile)
 
                         URLSession.shared.dataTask(with: request) { data, response, error in
-                            if let http = response as? HTTPURLResponse {
-                                Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Upload response status=\(http.statusCode)")
+                            if response is HTTPURLResponse {
+                                //Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Upload response status=\(http.statusCode)")
                             }
                             if error != nil { failure() }
                             else {
-                                Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Upload finished successfully")
+                                //Logger.shared.log(position: "GraphService.uploadContentsToRemote", type: "DEBUG", content: "Upload finished successfully")
                                 success()
                             }
                         }.resume()
@@ -922,18 +913,18 @@ class GraphService {
         username: String,
         completion: @escaping (String?) -> Void
     ) {
-        Logger.shared.log(
+        /*Logger.shared.log(
             position: "GraphService.resolveUserMacOSFolderId",
             type: "DEBUG",
             content: "Resolving user macOS folder id for username: \(username)"
-        )
+        )*/
         
         let username = self.normalizedUsername(username)
-        Logger.shared.log(
+        /*Logger.shared.log(
             position: "GraphService.resolveUserMacOSFolderId",
             type: "DEBUG",
             content: "Using normalized username: \(username)"
-        )
+        )*/
 
         getSiteId(accessToken: accessToken, siteId: siteId, domain: sharepointDomain) { siteId in
             guard let siteId else { completion(nil); return }
@@ -948,11 +939,11 @@ class GraphService {
                     "RemoteData/macOS/" +
                     username
 
-                Logger.shared.log(
+                /*Logger.shared.log(
                     position: "GraphService.resolveUserMacOSFolderId",
                     type: "DEBUG",
                     content: "Resolving path: \(fullPath)"
-                )
+                )*/
 
                 let url = URL(string:
                     "https://graph.microsoft.com/v1.0/sites/\(siteId)/drives/\(driveId)/root:/\(fullPath)"
@@ -963,11 +954,11 @@ class GraphService {
                 request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
 
                 URLSession.shared.dataTask(with: request) { data, response, _ in
-                    Logger.shared.log(
+                    /*Logger.shared.log(
                         position: "GraphService.resolveUserMacOSFolderId",
                         type: "DEBUG",
                         content: "Response status=\((response as? HTTPURLResponse)?.statusCode ?? -1), bytes=\(data?.count ?? 0)"
-                    )
+                    )*/
 
                     guard
                         let data,
@@ -978,11 +969,11 @@ class GraphService {
                         return
                     }
 
-                    Logger.shared.log(
+                    /*Logger.shared.log(
                         position: "GraphService.resolveUserMacOSFolderId",
                         type: "DEBUG",
                         content: "Resolved user folder id: \(id)"
-                    )
+                    )*/
 
                     completion(id)
                 }.resume()
@@ -1000,6 +991,7 @@ private extension String {
         return s
     }
 }
+
 
 
 

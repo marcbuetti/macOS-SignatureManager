@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Signature Manager</title>
+        <item>
+            <title>4.0</title>
+            <pubDate>Mon, 16 Feb 2026 22:53:06 +0100</pubDate>
+            <sparkle:version>981</sparkle:version>
+            <sparkle:shortVersionString>4.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/marcbuetti/macOS-SignatureManager/releases/download/4.0-pre1/Signature.Manager.dmg" length="8285707" type="application/octet-stream" sparkle:edSignature="EmqhMFZ+ytelTd9dNaaW9xTrtVD8uqoAbgqgReKkXdKpoLwiTpxKqxLmhYUH0vWG3QxdAA4Lyyj6JPgLWU4KDA=="/>
+        </item>
+    </channel>
+</rss>

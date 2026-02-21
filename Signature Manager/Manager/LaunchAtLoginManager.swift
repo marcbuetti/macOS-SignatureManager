@@ -33,16 +33,17 @@ class LaunchAtLoginManager: ObservableObject {
                 do {
                     try SMAppService.mainApp.register()
                 } catch {
-                    Logger.shared.log(position: "LaunchAtLoginManager.toggleLaunchAtLogin", type: "CRITICAL", content: "Failed to register launch at login: \(error.localizedDescription)")
+                    LogManager.shared.log(.critical, "Failed to register launch at login: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 }
             } else {
                 do {
                     try await SMAppService.mainApp.unregister()
                 } catch {
-                    Logger.shared.log(position: "LaunchAtLoginManager.toggleLaunchAtLogin", type: "CRITICAL", content: "Failed to unregister launch at login: \(error.localizedDescription)")
+                    LogManager.shared.log(.critical, "Failed to unregister launch at login: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 }
             }
             await self.updateStatus()
         }
     }
 }
+

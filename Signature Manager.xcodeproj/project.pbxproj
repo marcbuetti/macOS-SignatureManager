@@ -33,8 +33,6 @@
 		24609A222F37E930009957DF /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24609A212F37E930009957DF /* AboutView.swift */; };
 		24637F6E2F38CE7000ED68D9 /* RichHTMLTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24637F6D2F38CE6500ED68D9 /* RichHTMLTextEditor.swift */; };
 		24637F722F38E30700ED68D9 /* SwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24637F712F38E30700ED68D9 /* SwiftUIView.swift */; };
-		24CA1D8E2E7CC877000ADB5D /* MigrationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24CA1D8D2E7CC870000ADB5D /* MigrationService.swift */; };
-		24CA1D902E7CCB66000ADB5D /* MigrationSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24CA1D8F2E7CCB66000ADB5D /* MigrationSheetView.swift */; };
 		24CCDC212E78CF0700B13B61 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24CCDC202E78CF0700B13B61 /* Notifications.swift */; };
 /* End PBXBuildFile section */
 
@@ -102,8 +100,6 @@
 		24609A212F37E930009957DF /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		24637F6D2F38CE6500ED68D9 /* RichHTMLTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichHTMLTextEditor.swift; sourceTree = "<group>"; };
 		24637F712F38E30700ED68D9 /* SwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIView.swift; sourceTree = "<group>"; };
-		24CA1D8D2E7CC870000ADB5D /* MigrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationService.swift; sourceTree = "<group>"; };
-		24CA1D8F2E7CCB66000ADB5D /* MigrationSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationSheetView.swift; sourceTree = "<group>"; };
 		24CCDC202E78CF0700B13B61 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,7 +125,6 @@
 		24030A1E2E7A2E0300CF52A1 /* Hello */ = {
 			isa = PBXGroup;
 			children = (
-				24CA1D8F2E7CCB66000ADB5D /* MigrationSheetView.swift */,
 				244E75172E70C65B00B78709 /* HelloView.swift */,
 			);
 			path = Hello;
@@ -183,7 +178,6 @@
 		244E75332E70C65F00B78709 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				24CA1D8D2E7CC870000ADB5D /* MigrationService.swift */,
 				244E752D2E70C65F00B78709 /* DockWatchService.swift */,
 				244E752F2E70C65F00B78709 /* GraphService.swift */,
 			);
@@ -363,7 +357,6 @@
 			files = (
 				24609A222F37E930009957DF /* AboutView.swift in Sources */,
 				24CCDC212E78CF0700B13B61 /* Notifications.swift in Sources */,
-				24CA1D8E2E7CC877000ADB5D /* MigrationService.swift in Sources */,
 				244E75492E70C66600B78709 /* MenuBarController.swift in Sources */,
 				244E754A2E70C66600B78709 /* MenuBarLiveActivity.swift in Sources */,
 				244E754B2E70C66600B78709 /* MenuBarStatus.swift in Sources */,
@@ -372,7 +365,6 @@
 				244E75212E70C65B00B78709 /* NotificationProcessView.swift in Sources */,
 				24637F722F38E30700ED68D9 /* SwiftUIView.swift in Sources */,
 				244E75232E70C65B00B78709 /* SignatureEditorView.swift in Sources */,
-				24CA1D902E7CCB66000ADB5D /* MigrationSheetView.swift in Sources */,
 				244E75242E70C65B00B78709 /* ContentView.swift in Sources */,
 				244E75252E70C65B00B78709 /* HelloView.swift in Sources */,
 				244E75262E70C65B00B78709 /* LegalDetailView.swift in Sources */,
@@ -541,7 +533,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 998;
+				CURRENT_PROJECT_VERSION = 1015;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = NO;
@@ -562,7 +554,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 4.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbuettner.SignatureManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -583,7 +575,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 998;
+				CURRENT_PROJECT_VERSION = 1015;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -603,7 +595,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 4.0;
+				MARKETING_VERSION = 4.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mbuettner.SignatureManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

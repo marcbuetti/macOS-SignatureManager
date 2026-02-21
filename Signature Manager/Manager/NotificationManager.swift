@@ -12,7 +12,7 @@ class NotificationManager {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
-                Logger.shared.log(position: "AppManager.notificationAuthorize", type: "CRITICAL", content: "Notification authorization error: \(error.localizedDescription)")
+                LogManager.shared.log(.critical, "Notification authorization error: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 completion(false)
                 return
             }
@@ -23,7 +23,7 @@ class NotificationManager {
     static func notification(title: String, body: String) {
         notificationAuthorize { granted in
             guard granted else {
-                Logger.shared.log(position: "AppManager.notification", type: "WARNING", content: "Notification permission not granted; skipping notification")
+                LogManager.shared.log(.warning, "Notification permission not granted; skipping notification", fileID: #fileID, function: #function, line: #line)
                 return
             }
             
@@ -36,7 +36,7 @@ class NotificationManager {
             
             UNUserNotificationCenter.current().add(request) { error in
                 if let error = error {
-                    Logger.shared.log(position: "AppManager.notification", type: "CRITICAL", content: "Failed to schedule notification: \(error.localizedDescription)")
+                    LogManager.shared.log(.critical, "Failed to schedule notification: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 }
             }
         }

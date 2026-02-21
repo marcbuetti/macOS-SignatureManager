@@ -4,22 +4,6 @@
     "" : {
       "shouldTranslate" : false
     },
-    "%@ - LETS_GET_STARTED" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ Lass uns loslegen!"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ - Lets get Started!"
-          }
-        }
-      }
-    },
     "12" : {
       "shouldTranslate" : false
     },
@@ -883,70 +867,6 @@
         }
       }
     },
-    "MIGRATING_CLOUD_CONNECTIONS" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migrieren von Cloud-Verbindungen…"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migrating cloud connections…"
-          }
-        }
-      }
-    },
-    "MIGRATING_SETTINGS" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migrieren von Einstellungen…"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migrating settings…"
-          }
-        }
-      }
-    },
-    "MIGRATING_SIGNATURES" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migrieren von Signaturen…"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migrating signatures…"
-          }
-        }
-      }
-    },
-    "MIGRATION" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migration"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Migration"
-          }
-        }
-      }
-    },
     "NAME" : {
       "localizations" : {
         "de" : {
@@ -1711,6 +1631,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waiting for licensing server…"
+          }
+        }
+      }
+    },
+    "WELCOME - LETS_GET_STARTED" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Willkommen - Lass uns los legen!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome - Lets get started!"
           }
         }
       }

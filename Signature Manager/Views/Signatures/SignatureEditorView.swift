@@ -176,11 +176,7 @@ struct SignatureEditorView: View {
                                     replaceStandardSignature(with: extracted)
 
                                 } catch {
-                                    Logger.shared.log(
-                                        position: "AddSignatureView.standardPicker",
-                                        type: "CRITICAL",
-                                        content: error.localizedDescription
-                                    )
+                                    LogManager.shared.log(.critical, error.localizedDescription, fileID: #fileID, function: #function, line: #line)
                                 }
                             }
                             .onAppear {
@@ -358,7 +354,7 @@ struct SignatureEditorView: View {
                                         loadEditableFromHTML(at: url)
                                     }
                                 case .failure:
-                                    Logger.shared.log(position: "AddSignatureView.fileImporter", type: "WARNING", content: "User cancelled or failed selecting HTML file")
+                                    LogManager.shared.log(.warning, "User cancelled or failed selecting HTML file", fileID: #fileID, function: #function, line: #line)
                                     selectedHTMLFile = nil
                                     richText = ""
                                     htmlAfterCustom = ""
@@ -494,116 +490,203 @@ struct SignatureEditorView: View {
     }
 
     private func saveSignature() {
-        // 🔥 FINALEN NAMEN FESTLEGEN
         guard signatures.indices.contains(selectedSignatureIndex) else { return }
         let selectedMailSig = signatures[selectedSignatureIndex]
-        
-        // 🔹 Name für SwiftData (Apple Mail)
+
         let mailSignatureName = selectedMailSig.name
+        let mailSignatureId = selectedMailSig.id
 
-        // 🔹 Name für Cache / M365
-        let customName = normalizeSignatureName(customSignatureName)
-        let finalCacheURL = cacheFileURLForCustom(name: customName)
+        var finalHTMLURL: URL?
 
-        // 🔁 LOKAL UMBENENNEN (Draft ODER bestehende Custom)
-        if let currentURL = selectedHTMLFile,
-           currentURL != finalCacheURL {
+        // =========================================================
+        // 🖥 LOCAL STORAGE
+        // =========================================================
+        if signatureStorageSelection == 0 {
 
-            try? FileManager.default.moveItem(
-                at: currentURL,
-                to: finalCacheURL
-            )
+            guard let fileURL = selectedHTMLFile else { return }
 
-            selectedHTMLFile = finalCacheURL
-        }
-
-        // Draft ist jetzt final
-        draftCustomID = nil
-        originalCustomName = mailSignatureName
-        
-        
-        if let fileURL = selectedHTMLFile {
             do {
                 let original = (try? String(contentsOf: fileURL, encoding: .utf8)) ?? ""
-                let newParagraph = formattedHTMLFromEditor()
+                let edited = formattedHTMLFromEditor()
                 let merged = buildHTMLWithEditedParagraph(
                     originalHTML: original,
-                    editedCustomHTML: newParagraph
+                    editedCustomHTML: edited
                 )
                 try merged.write(to: fileURL, atomically: true, encoding: .utf8)
-
-                if signatureStorageSelection == 1 {
-                    let graph = GraphService()
-
-                    graph.fetchRemoteUser { user in
-                        guard let user else { return }
-
-                        graph.uploadCustomSignature(
-                            userFolder: user,
-                            localFileURL: selectedHTMLFile!,
-                            desiredName: customSignatureName,
-                            success: { finalFileName in
-                                DispatchQueue.main.async {
-                                    // 🔥 Cache-Datei ggf. anpassen
-                                    let cleanName = finalFileName.replacingOccurrences(of: ".html", with: "")
-                                    let finalCacheURL = cacheFileURLForCustom(name: cleanName)
-
-                                    if fileURL != finalCacheURL {
-                                        try? FileManager.default.moveItem(
-                                            at: fileURL,
-                                            to: finalCacheURL
-                                        )
-                                        selectedHTMLFile = finalCacheURL
-                                    }
-                                }
-                            },
-                            failure: {
-                                Logger.shared.log(
-                                    position: "AddSignatureView.saveSignature",
-                                    type: "CRITICAL",
-                                    content: "M365 custom signature upload failed"
-                                )
-                            }
-                        )
-                    }
-                }
+                finalHTMLURL = fileURL
             } catch {
-                Logger.shared.log(
-                    position: "AddSignatureView.saveSignature",
-                    type: "CRITICAL",
-                    content: "Failed to write HTML: \(error.localizedDescription)"
-                )
+                LogManager.shared.log(.critical, "Failed writing local HTML: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
+                return
             }
         }
 
+        // =========================================================
+        // ☁️ CLOUD STORAGE
+        // =========================================================
+        else {
+
+            guard m365Files.indices.contains(selectedM365Index) || selectedM365Index == -2 else {
+                return
+            }
+
+            // -----------------------------------------------------
+            // ☁️ CLOUD STANDARD
+            // -----------------------------------------------------
+            if selectedM365Index != -2,
+               m365Files[selectedM365Index].name.lowercased().contains("standard") {
+
+                // Standard-Dateien bleiben in onlineSignatures!
+                let originalURL = m365Files[selectedM365Index].url
+
+                do {
+                    let original = (try? String(contentsOf: originalURL, encoding: .utf8)) ?? ""
+                    let edited = formattedHTMLFromEditor()
+                    let merged = buildHTMLWithEditedParagraph(
+                        originalHTML: original,
+                        editedCustomHTML: edited
+                    )
+                    try merged.write(to: originalURL, atomically: true, encoding: .utf8)
+                    finalHTMLURL = originalURL
+                } catch {
+                    LogManager.shared.log(.critical, "Failed writing standard HTML: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
+                    return
+                }
+            }
+
+            // -----------------------------------------------------
+            // ☁️ CLOUD CUSTOM
+            // -----------------------------------------------------
+            else {
+
+                // Sicherstellen dass Name existiert
+                let trimmedName = customSignatureName
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+
+                guard !trimmedName.isEmpty else {
+                    LogManager.shared.log(.warning, "Custom signature name empty", fileID: #fileID, function: #function, line: #line)
+                    return
+                }
+
+                let normalizedName = normalizeSignatureName(trimmedName)
+
+                // Custom-Dateien IMMER mit Mail-ID koppeln (stabil!)
+                let finalCacheURL = cacheFileURLForCustom(
+                    name: "\(mailSignatureId)_\(normalizedName)"
+                )
+
+                do {
+                    let edited = formattedHTMLFromEditor()
+                    let merged = htmlBeforeCustom + edited + htmlAfterCustom
+                    try merged.write(to: finalCacheURL, atomically: true, encoding: .utf8)
+                    finalHTMLURL = finalCacheURL
+                } catch {
+                    LogManager.shared.log(.critical, "Failed writing custom HTML: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
+                    return
+                }
+
+                // Upload zu M365
+                let graph = GraphService()
+                graph.fetchRemoteUser { user in
+                    guard let user else { return }
+
+                    graph.uploadCustomSignature(
+                        userFolder: user,
+                        localFileURL: finalCacheURL,
+                        desiredName: normalizedName,
+                        success: { _ in },
+                        failure: {
+                            LogManager.shared.log(.critical, "M365 upload failed", fileID: #fileID, function: #function, line: #line)
+                        }
+                    )
+                }
+            }
+        }
+
+        guard let safeURL = finalHTMLURL else { return }
+
+        // =========================================================
+        // 💾 SWIFTDATA SAVE / UPDATE
+        // =========================================================
+
         if let existing = signature {
-            // 🔁 UPDATE
-            existing.mailSignatureId = selectedMailSig.id
+            existing.mailSignatureId = mailSignatureId
             existing.name = mailSignatureName
-            existing.htmlPath = selectedHTMLFile?.path ?? ""
+            existing.htmlPath = safeURL.path
             existing.storageType = signatureStorageSelection == 0 ? .local : .cloudM365
             existing.m365FileName = signatureStorageSelection == 1
-                ? selectedHTMLFile?.lastPathComponent
+                ? safeURL.lastPathComponent
                 : nil
             existing.lastUpdated = .now
+
+            do {
+                try context.save()
+            } catch {
+                LogManager.shared.log(.critical, "SwiftData save failed: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
+            }
 
             dismiss()
             return
         }
 
-        // ➕ CREATE
         let newSignature = Signature(
-            mailSignatureId: selectedMailSig.id,
+            mailSignatureId: mailSignatureId,
             name: mailSignatureName,
-            htmlPath: selectedHTMLFile?.path ?? "",
+            htmlPath: safeURL.path,
             storageType: signatureStorageSelection == 0 ? .local : .cloudM365,
             m365FileName: signatureStorageSelection == 1
-                ? selectedHTMLFile?.lastPathComponent
+                ? safeURL.lastPathComponent
                 : nil,
             lastUpdated: .now
         )
+        print("""
+        ==== SAVED SIGNATURE ====
+        mailSignatureId: \(newSignature.mailSignatureId)
+        name: \(newSignature.name)
+        htmlPath: \(newSignature.htmlPath)
+        storageType: \(newSignature.storageType)
+        m365FileName: \(newSignature.m365FileName ?? "nil")
+        lastUpdated: \(newSignature.lastUpdated)
+        =========================
+        """)
 
         context.insert(newSignature)
+
+        do {
+            try context.save()
+            print("💾 Context saved successfully")
+        } catch {
+            print("❌ Context save failed:", error.localizedDescription)
+        }
+
+        // 🔎 Jetzt ALLE gespeicherten Signaturen anzeigen
+        do {
+            let descriptor = FetchDescriptor<Signature>(
+                sortBy: [SortDescriptor(\.lastUpdated, order: .reverse)]
+            )
+            
+            let allSignatures = try context.fetch(descriptor)
+
+            print("========== ALL SIGNATURES IN SWIFTDATA ==========")
+
+            for sig in allSignatures {
+                print("""
+                --------------------------------
+                mailSignatureId: \(sig.mailSignatureId)
+                name: \(sig.name)
+                htmlPath: \(sig.htmlPath)
+                storageType: \(sig.storageType)
+                m365FileName: \(sig.m365FileName ?? "nil")
+                lastUpdated: \(sig.lastUpdated)
+                --------------------------------
+                """)
+            }
+
+            print("===============================================")
+
+        } catch {
+            print("❌ Failed fetching all signatures:", error.localizedDescription)
+        }
+
         dismiss()
     }
 
@@ -634,11 +717,7 @@ struct SignatureEditorView: View {
                 let start = html.range(of: "<custom>"),
                 let end = html.range(of: "</custom>")
             else {
-                Logger.shared.log(
-                    position: "AddSignatureView.loadEditableFromHTML",
-                    type: "WARNING",
-                    content: "<custom> block not found"
-                )
+                LogManager.shared.log(.warning, "<custom> block not found", fileID: #fileID, function: #function, line: #line)
                 richText = ""
                 htmlBeforeCustom = html
                 htmlAfterCustom = ""
@@ -677,11 +756,7 @@ struct SignatureEditorView: View {
             richText = AttributedString(plain)
 
         } catch {
-            Logger.shared.log(
-                position: "AddSignatureView.loadEditableFromHTML",
-                type: "CRITICAL",
-                content: error.localizedDescription
-            )
+            LogManager.shared.log(.critical, "Failed to load signature HTML", fileID: #fileID, function: #function, line: #line)
             richText = ""
             htmlBeforeCustom = ""
             htmlAfterCustom = ""
@@ -805,7 +880,7 @@ struct SignatureEditorView: View {
         let graph = GraphService()
         graph.fetchRemoteUser { user in
             guard let user = user else {
-                Logger.shared.log(position: "AddSignatureView.loadM365Files", type: "WARNING", content: "Could not resolve user for M365 fetch")
+                LogManager.shared.log(.warning, "Could not resolve user for M365 fetch", fileID: #fileID, function: #function, line: #line)
                 DispatchQueue.main.async {
                     self.isLoadingM365 = false
                     self.m365Error = "Could not load user"
@@ -874,7 +949,7 @@ struct SignatureEditorView: View {
                 }
 
             }, failure: {
-                Logger.shared.log(position: "AddSignatureView.loadM365Files", type: "CRITICAL", content: "Download of M365 files failed")
+                LogManager.shared.log(.critical, "Download of M365 files failed", fileID: #fileID, function: #function, line: #line)
                 DispatchQueue.main.async {
                     self.isLoadingM365 = false
                     self.m365Error = "Download failed"
@@ -1020,11 +1095,7 @@ struct SignatureEditorView: View {
             // 🔥 WICHTIG: Draft ist jetzt FINAL
             draftCustomID = nil
         } catch {
-            Logger.shared.log(
-                position: "AddSignatureView.renameDraftIfNeeded",
-                type: "CRITICAL",
-                content: error.localizedDescription
-            )
+            LogManager.shared.log(.critical, error.localizedDescription, fileID: #fileID, function: #function, line: #line)
         }
     }
     

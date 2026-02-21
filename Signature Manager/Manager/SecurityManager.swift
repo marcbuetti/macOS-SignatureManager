@@ -16,7 +16,7 @@ class SecurityManager {
         let testPath = "\(userDirectory)/Library/Mail/V10/MailData/Signatures"
         let readable = fileManager.isReadableFile(atPath: testPath)
         if !readable {
-            Logger.shared.log(position: "AppManager.hasFullDiskAccess", type: "WARNING", content: "No read access to: \(testPath)")
+            LogManager.shared.log(.warning, "No read access to: \(testPath)", fileID: #fileID, function: #function, line: #line)
         }
         return readable
     }
@@ -36,11 +36,7 @@ class SecurityManager {
                     DispatchQueue.main.async {
                         if !success {
                             if let authError {
-                                Logger.shared.log(
-                                    position: "AuthService.authenticateUser",
-                                    type: "WARNING",
-                                    content: authError.localizedDescription
-                                )
+                                LogManager.shared.log(.warning, authError.localizedDescription, fileID: #fileID, function: #function, line: #line)
                             }
 
                             showAlert(
@@ -54,11 +50,7 @@ class SecurityManager {
                 }
             } else {
                 if let error {
-                    Logger.shared.log(
-                        position: "AuthService.authenticateUser",
-                        type: "CRITICAL",
-                        content: error.localizedDescription
-                    )
+                    LogManager.shared.log(.critical, error.localizedDescription, fileID: #fileID, function: #function, line: #line)
                 }
 
                 DispatchQueue.main.async {
@@ -134,11 +126,7 @@ class SecurityManager {
 
             DispatchQueue.main.async {
                 if result != errAuthorizationSuccess {
-                    Logger.shared.log(
-                        position: "AuthService.authenticateAdmin",
-                        type: "WARNING",
-                        content: "Admin authorization failed (status=\(result))"
-                    )
+                    LogManager.shared.log(.warning, "Admin authorization failed", fileID: #fileID, function: #function, line: #line)
                     
                     showAlert(
                         titleKey: "ADMIN_AUTH_FAILED",
@@ -206,19 +194,11 @@ class SecurityManager {
         completion: @escaping (Bool) -> Void
     ) {
         if isCurrentUserAdmin() {
-            Logger.shared.log(
-                position: "AuthService.authenticateAdminAware",
-                type: "DEBUG",
-                content: "User is admin → using user authentication"
-            )
+            LogManager.shared.log(.info, "User is admin → using user authentication", fileID: #fileID, function: #function, line: #line)
             
             authenticateUser(reason: reason, completion: completion)
         } else {
-            Logger.shared.log(
-                position: "AuthService.authenticateAdminAware",
-                type: "DEBUG",
-                content: "User is NOT admin → requesting admin authorization"
-            )
+            LogManager.shared.log(.info, "User is NOT admin → requesting admin authorization", fileID: #fileID, function: #function, line: #line)
             
             authenticateAdmin(reason: reason, completion: completion)
         }

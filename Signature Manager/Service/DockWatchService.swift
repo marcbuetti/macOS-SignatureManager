@@ -15,7 +15,7 @@ struct DockWatcher: NSViewRepresentable {
             if let window = v.window {
                 context.coordinator.startObserving(window)
             } else {
-                Logger.shared.log(position: "DockWatcher.makeNSView", type: "WARNING", content: "NSView has no window yet; cannot start observing")
+                LogManager.shared.log(.critical, "NSView has no window yet; cannot start observing")
             }
         }
         return v
@@ -31,7 +31,7 @@ struct DockWatcher: NSViewRepresentable {
                 // Already observing this window; no log to avoid noise
                 return
             } else if self.window != nil {
-                Logger.shared.log(position: "DockWatcher.startObserving", type: "WARNING", content: "startObserving called while another window is already observed; replacing reference")
+                LogManager.shared.log(.warning, "startObserving called while another window is already observed; replacing reference")
             }
             
             self.window = window

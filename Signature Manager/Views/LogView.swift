@@ -48,7 +48,7 @@ struct ShareFileButton: View {
     
     var body: some View {
         Button(action: {
-            let logContent = Logger.shared.getLog()
+            let logContent = LogManager.shared.getLog()
             let header = getSystemLogHeader()
             let combinedContent = header + logContent
             
@@ -143,7 +143,7 @@ struct LogView: View {
                         Button {
                             isLoading = true
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                logText = Logger.shared.getLog()
+                                logText = LogManager.shared.getLog()
                                 isLoading = false
                             }
                         } label: {
@@ -165,10 +165,10 @@ struct LogView: View {
             }
         }
         .onAppear {
-            logText = Logger.shared.getLog()
+            logText = LogManager.shared.getLog()
         }
         .overlay {
-            if Logger.shared.getLog().isEmpty{
+            if LogManager.shared.getLog().isEmpty{
                 ContentUnavailableView("NO_LOGS_YET",
                                        systemImage: "doc.text.magnifyingglass")
                 .padding(.top, 40)
@@ -181,7 +181,7 @@ struct LogView: View {
         ) {
             Button("DELETE", role: .destructive) {
                 do {
-                    try Logger.shared.clearLog()
+                    try LogManager.shared.clearLog()
                     logText = ""
                 } catch {
                     deleteError = error.localizedDescription

@@ -65,6 +65,10 @@ struct SignatureManager: App {
             graphService.reigsterRemoteDevice()
             graphService.updateRemoteStatus(status: "idle", remote: false)
             
+            // Inject shared SwiftData context into UpdateManager
+            let injectedContext = ModelContext(modelContainer)
+            UpdateManager.shared.setModelContext(injectedContext)
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
                 if updateSignaturesWithStart {
                     UpdateManager.shared.start(remoteRequested: false)
@@ -76,9 +80,9 @@ struct SignatureManager: App {
             }
         }
         
-        do { try Logger.shared.rotateLogFileIfNeeded()
+        do { try LogManager.shared.rotateLogFileIfNeeded()
         } catch {
-            Logger.shared.log(position: "APP", type: "CRITICAL", content: "Could not rotate log file: \(error)")
+            LogManager.shared.log(.critical, "Could not rotate log file: \(error)", fileID: #fileID, function: #function, line: #line)
         }
     }
     

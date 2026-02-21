@@ -1,0 +1,46 @@
+Privacy Policy
+Signature Manager for macOS
+Last updated: September 2025
+
+
+This application respects your privacy.
+All data is processed locally on your Mac.
+No personal information is collected, stored, or transmitted to any external servers or third parties without your organization’s explicit configuration.
+
+Data Handling
+The app processes and stores the following information locally:
+- Signature and configuration settings
+- Email accounts and related signatures within the macOS Mail app
+- Device and system information required for signature management
+
+By default, all data remains securely on your Mac.
+If your organization provides a configuration profile, the following exceptions may apply:
+- Connection to your organization’s Signature Cloud
+- Synchronization of signatures with Microsoft 365 (if enabled by your organization)
+
+In these cases, communication occurs only between your device and the services explicitly authorized by your organization.
+
+By default, the app does not connect to any external servers or cloud services.
+All signatures and configuration data remain on-device only.
+
+Security
+- Local data is stored securely in the macOS Keychain.
+- Communication with the Signature Cloud or Microsoft 365 (if activated) is performed exclusively over HTTPS and uses secure authentication mechanisms defined by your organization.
+
+Third-Party Services
+Depending on your organization’s configuration, the application may use the following external services:
+- Signature Cloud (only if enabled through a configuration profile)
+- Microsoft 365 (only if authorized by your organization)
+
+The use of these services is subject to the respective providers’ privacy policies.
+
+Trademarks
+Apple®, macOS®, and Microsoft® are trademarks of their respective owners.
+This app is not affiliated with or endorsed by Apple or Microsoft.
+
+
+Contact
+For any privacy-related questions, please contact:
+Developer: Marc Büttner
+Email: support@mibue.net
+Subject: Signature Manager

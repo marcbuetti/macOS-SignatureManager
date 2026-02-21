@@ -20,7 +20,6 @@ struct HelloView: View {
     @State private var notifState: PermissionState = .idle
     
     @State private var showConnectSheet = false
-    @State private var showMigrationSheet = false
     @State private var settingsWaitTask: Task<Void, Never>?
     
     @AppStorage("rights.fullDiskAccess") private var rightsFullDiskAccess: Bool = false
@@ -68,15 +67,6 @@ struct HelloView: View {
                // }
             //}
         //}
-        .sheet(isPresented: $showMigrationSheet, onDismiss: {
-            // Continue normal flow after migration sheet is dismissed
-            completeCheckout()
-        }) {
-            MigrationSheetView {
-                // When migration completes, dismiss the sheet
-                showMigrationSheet = false
-            }
-        }
     }
     
     // MARK: - Welcome View
@@ -91,7 +81,7 @@ struct HelloView: View {
                 Image(systemName: "sparkles.2")
                     .imageScale(.large)
                 (
-                    Text("\(MigrationService.hasLegacyVersion ? "UPDATE_COMPLETED" : "WELCOME") - LETS_GET_STARTED")
+                    Text("WELCOME - LETS_GET_STARTED")
                 )
                 .font(.title2)
                 .foregroundStyle(.secondary)
@@ -450,7 +440,7 @@ struct HelloView: View {
         let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")!
         let opened = NSWorkspace.shared.open(url)
         if !opened {
-            Logger.shared.log(position: "HelloView.openFullDiskAccessSettingsAndWait", type: "CRITICAL", content: "Failed to open Full Disk Access settings URL")
+            LogManager.shared.log(.critical, "Failed to open Full Disk Access settings URL", fileID: #fileID, function: #function, line: #line)
         }
         NSApp.activate(ignoringOtherApps: true)
         
@@ -467,7 +457,7 @@ struct HelloView: View {
                     return
                 }
                 if Date().timeIntervalSince(start) > Double(timeoutSeconds) {
-                    Logger.shared.log(position: "HelloView.openFullDiskAccessSettingsAndWait", type: "WARNING", content: "Full Disk Access not granted within timeout (\(timeoutSeconds)s)")
+                    LogManager.shared.log(.warning, "Full Disk Access not granted within timeout (\(timeoutSeconds)s)", fileID: #fileID, function: #function, line: #line)
                     await MainActor.run {
                         rightsFullDiskAccess = false
                         diskState = .denied
@@ -488,17 +478,12 @@ struct HelloView: View {
             center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
                 DispatchQueue.main.async {
                     if !granted {
-                        Logger.shared.log(position: "HelloView.askNotifications", type: "WARNING", content: "Notification permission denied by user")
+                        LogManager.shared.log(.warning, "Notification permission denied by user", fileID: #fileID, function: #function, line: #line)
                     }
                     rightsShowNotifications = granted
                     notifState = granted ? .granted : .denied
                     if granted {
-                        //connectToServer()
-                        if MigrationService.hasLegacyVersion {
-                            showMigrationSheet = true
-                        } else {
-                            completeCheckout()
-                        }
+                        completeCheckout()
                     }
                 }
             }

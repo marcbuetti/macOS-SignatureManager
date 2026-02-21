@@ -6,6 +6,8 @@
 	<string></string>
 	<key>GHApiToken</key>
 	<string>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?</string>
+	<key>SUAllowsSkippingUpdates</key>
+	<false/>
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>

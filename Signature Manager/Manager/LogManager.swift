@@ -1,5 +1,5 @@
 //
-//  Logger.swift
+//  LogManager.swift
 //  Signature Manager
 //
 //  Created by Marc Büttner on 18.09.24.
@@ -7,10 +7,24 @@
 
 import SwiftUI
 
+struct LogManager {
+    enum LogLevel: String {
+        case info
+        case warning
+        case critical
+        case note
 
-class Logger {
+        var prefix: String {
+            switch self {
+            case .info: return "INFO"
+            case .warning: return "WARNING"
+            case .critical: return "CRITICAL"
+            case .note: return "NOTE"
+            }
+        }
+    }
     
-    static let shared = Logger()
+    static let shared = LogManager()
     
     public var logFileURLForSharing: URL? {
         return self.logFileURL
@@ -31,21 +45,35 @@ class Logger {
     
     private init() {}
     
-    func log(position: String, type: String, content: String) {
-        let timestamp = getCurrentTimestamp()
-        let message = "\(timestamp).\(position).\(type) |-| \(content)\n"
-        
+    func log(_ level: LogLevel,
+             _ message: String,
+             fileID: String = #fileID,
+             function: String = #function,
+             line: Int = #line) {
+        // Derive a concise caller identifier from fileID (e.g., Module/File.swift -> File)
+        let caller: String = {
+            let file = (fileID as NSString).lastPathComponent
+            if let dotRange = file.range(of: ".", options: .backwards) {
+                return String(file[..<dotRange.lowerBound])
+            }
+            return file
+        }()
+
+        let formatted = "[\(level.prefix)][\(getCurrentDateFormatteed())][\(caller)/\(function):\(line)]: \(message)"
+
         do {
-            try appendToLogFile(message: message)
-            print(message)
+            try appendToLogFile(message: "\(formatted)\n")
+            print(formatted)
         } catch {
-            print("[LOGGER]]: \(error)")
+            print("[CRITICAL][\(getCurrentDateFormatteed())][LogManager]: \(error)")
         }
     }
     
-    private func getCurrentTimestamp() -> String {
+    private func getCurrentDateFormatteed() -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd/HH:mm:ss"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyy-MM-dd|HH:mm:ss"
         return formatter.string(from: Date())
     }
     

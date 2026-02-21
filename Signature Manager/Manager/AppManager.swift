@@ -17,11 +17,7 @@ class AppManager {
         ) { success in
 
             guard success else {
-                Logger.shared.log(
-                    position: "AppManager.quit",
-                    type: "WARNING",
-                    content: "User authentication failed"
-                )
+                LogManager.shared.log(.critical, "User authentication failed")
 
                 let alert = NSAlert()
                 alert.messageText = String(localized: "AUTHENTICATION_FAILED")

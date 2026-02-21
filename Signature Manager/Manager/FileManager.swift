@@ -17,7 +17,7 @@ class FileManagerHelper {
             do {
                 try FileManager.default.createDirectory(at: appDirectory, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                Logger.shared.log(position: "FileManagerHelper.getAppSupportDirectory", type: "CRITICAL", content: "Failed to create app support directory: \(error.localizedDescription)")
+                LogManager.shared.log(.critical, "Failed to create app support directory: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             }
         }
         
@@ -32,7 +32,7 @@ class FileManagerHelper {
             do {
                 try FileManager.default.createDirectory(at: backupDirectory, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                Logger.shared.log(position: "FileManagerHelper.getBackupDirectory", type: "CRITICAL", content: "Failed to create backup directory: \(error.localizedDescription)")
+                LogManager.shared.log(.critical, "Failed to create backup directory: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             }
         }
         
@@ -55,13 +55,13 @@ class FileManagerHelper {
                 do {
                     try fileManager.moveItem(at: file, to: destinationURL)
                 } catch {
-                    Logger.shared.log(position: "FileManagerHelper.backupAllHTMLFiles", type: "CRITICAL", content: "Error moving file \(file.lastPathComponent): \(error.localizedDescription)")
+                    LogManager.shared.log(.critical, "Error moving file \(file.lastPathComponent): \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                     success = false
                 }
             }
             
         } catch {
-            Logger.shared.log(position: "FileManagerHelper.backupAllHTMLFiles", type: "CRITICAL", content: "Error listing contents of Application Support Directory: \(error.localizedDescription)")
+            LogManager.shared.log(.critical, "Error listing contents of Application Support Directory: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             success = false
         }
         
@@ -83,13 +83,13 @@ class FileManagerHelper {
                 do {
                     try fileManager.moveItem(at: file, to: destinationURL)
                 } catch {
-                    Logger.shared.log(position: "FileManagerHelper.restoreHTMLFilesFromBackup", type: "CRITICAL", content: "Error restoring file \(file.lastPathComponent): \(error.localizedDescription)")
+                    LogManager.shared.log(.critical, "Error restoring file \(file.lastPathComponent): \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                     success = false
                 }
             }
             
         } catch {
-            Logger.shared.log(position: "FileManagerHelper.restoreHTMLFilesFromBackup", type: "CRITICAL", content: "Error listing contents of Backup Directory: \(error.localizedDescription)")
+            LogManager.shared.log(.critical, "Error listing contents of Backup Directory: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             success = false
         }
         
@@ -102,7 +102,7 @@ class FileManagerHelper {
             try data.write(to: fileURL, options: .atomic)
             return true
         } catch {
-            Logger.shared.log(position: "FileManagerHelper.saveDataToFile", type: "CRITICAL", content: "Error saving data: \(error.localizedDescription)")
+            LogManager.shared.log(.critical, "Error saving data: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             return false
         }
     }
@@ -113,7 +113,7 @@ class FileManagerHelper {
             let data = try Data(contentsOf: fileURL)
             return data
         } catch {
-            Logger.shared.log(position: "FileManagerHelper.loadDataFromFile", type: "CRITICAL", content: "Error loading data: \(error.localizedDescription)")
+            LogManager.shared.log(.critical, "Error loading data: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
             return nil
         }
     }
@@ -125,11 +125,11 @@ class FileManagerHelper {
                 try FileManager.default.removeItem(at: fileURL)
                 return true
             } catch {
-                Logger.shared.log(position: "FileManagerHelper.deleteFile", type: "CRITICAL", content: "Error deleting file: \(error.localizedDescription)")
+                LogManager.shared.log(.critical, "Error deleting file: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 return false
             }
         } else {
-            Logger.shared.log(position: "FileManagerHelper.deleteFile", type: "WARNING", content: "File does not exist: \(fileURL.path)")
+            LogManager.shared.log(.warning, "File does not exist: \(fileURL.path)", fileID: #fileID, function: #function, line: #line)
             return false
         }
     }
@@ -147,12 +147,12 @@ class FileManagerHelper {
                 do {
                     try fileManager.removeItem(at: file)
                 } catch {
-                    Logger.shared.log(position: "FileManagerHelper.deleteAllHTMLFiles", type: "CRITICAL", content: "Error deleting file \(file.lastPathComponent): \(error.localizedDescription)")
+                    LogManager.shared.log(.critical, "Error deleting file: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 }
             }
             
         } catch {
-            Logger.shared.log(position: "FileManagerHelper.deleteAllHTMLFiles", type: "CRITICAL", content: "Error listing contents of directory: \(error.localizedDescription)")
+            LogManager.shared.log(.critical, "Error listing contents of directory: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
         }
     }
 }

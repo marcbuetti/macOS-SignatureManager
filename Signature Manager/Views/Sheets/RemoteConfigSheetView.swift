@@ -128,7 +128,7 @@ struct RemoteConfigSheetView: View {
             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1s
             let urlString = "https://\(remoteAddress)?apiKey=\(remoteApiKey)"
             guard let url = URL(string: urlString) else {
-                Logger.shared.log(position: "RemoteConfigSheetView.startAutodiscover", type: "WARNING", content: "Invalid URL for remote config")
+                LogManager.shared.log(.critical, "Invalid URL for remote config", fileID: #fileID, function: #function, line: #line)
                 phase = .failed("Invalid URL")
                 return
             }
@@ -138,7 +138,7 @@ struct RemoteConfigSheetView: View {
             do {
                 let (data, response) = try await URLSession.shared.data(from: url)
                 if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-                    Logger.shared.log(position: "RemoteConfigSheetView.startAutodiscover", type: "WARNING", content: "Remote config HTTP status: \(http.statusCode)")
+                    LogManager.shared.log(.critical, "Remote config HTTP status: \(http.statusCode)", fileID: #fileID, function: #function, line: #line)
                     phase = .failed("HTTP \(http.statusCode)")
                     return
                 }
@@ -168,7 +168,7 @@ struct RemoteConfigSheetView: View {
                 phase = .completed
                 
             } catch {
-                Logger.shared.log(position: "RemoteConfigSheetView.startAutodiscover", type: "CRITICAL", content: "Remote config error: \(error.localizedDescription)")
+                LogManager.shared.log(.critical, "Remote config error: \(error.localizedDescription)", fileID: #fileID, function: #function, line: #line)
                 phase = .failed(error.localizedDescription)
             }
         }

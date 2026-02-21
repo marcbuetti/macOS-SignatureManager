@@ -17,6 +17,16 @@ public protocol MenuBarPresenting: AnyObject {
 }
 public enum MenuBarIconState { case ok, updating, error }
 
+private struct WindowOpener: View {
+    @Environment(\.openWindow) private var openWindow
+    let id: String
+
+    var body: some View {
+        Color.clear
+            .frame(width: 0, height: 0)
+            .onAppear { openWindow(id: id) }
+    }
+}
 
 final class MenuBarController: NSObject, ObservableObject, MenuBarPresenting, NSMenuDelegate {
     
@@ -151,9 +161,23 @@ final class MenuBarController: NSObject, ObservableObject, MenuBarPresenting, NS
     }
 
     @objc private func didTapSettings() {
-        let openWindow = Environment(\.openWindow).wrappedValue
+        // Ensure app is active and visible in the Dock
+        NSApplication.shared.activate(ignoringOtherApps: true)
         NotificationCenter.default.post(name: .ShowAppInDock, object: nil)
-        openWindow(id: "content")
+
+        // Bridge into SwiftUI's Environment(\.openWindow) by hosting a tiny helper view
+        if let button = statusItem.button {
+            let host = NSHostingView(rootView: WindowOpener(id: "content"))
+            host.translatesAutoresizingMaskIntoConstraints = false
+            host.isHidden = true
+            button.addSubview(host)
+            // Remove the helper view shortly after it triggers onAppear
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                host.removeFromSuperview()
+            }
+        }
+
+        // Bring the window to front after it opens
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .BringWindowToFront, object: nil)
         }
@@ -165,7 +189,7 @@ final class MenuBarController: NSObject, ObservableObject, MenuBarPresenting, NS
 
     private func applyStatus(_ status: MenuBarStatus) {
         guard let button = statusItem.button else {
-            Logger.shared.log(position: "MenuBarController.applyStatus", type: "CRITICAL", content: "NSStatusBarButton is nil; cannot apply status")
+            LogManager.shared.log(.critical, "NSStatusBarButton is nil; cannot apply status", fileID: #fileID, function: #function, line: #line)
             return
         }
         tearDownLiveActivityIfNeeded()
@@ -195,7 +219,7 @@ final class MenuBarController: NSObject, ObservableObject, MenuBarPresenting, NS
 
     private func showLiveActivityView() {
         guard let button = statusItem.button else {
-            Logger.shared.log(position: "MenuBarController.showLiveActivityView", type: "CRITICAL", content: "NSStatusBarButton is nil; cannot show live activity")
+            LogManager.shared.log(.critical, "NSStatusBarButton is nil; cannot show live activity", fileID: #fileID, function: #function, line: #line)
             return
         }
 
@@ -292,7 +316,7 @@ final class MenuBarController: NSObject, ObservableObject, MenuBarPresenting, NS
         if menuBarLiveActivity.showLiveActivity {
             if progressLayer == nil { showLiveActivityView() }
             if progressLayer == nil {
-                Logger.shared.log(position: "MenuBarController.updateProgress", type: "CRITICAL", content: "Progress layer is nil after attempting to show live activity")
+                LogManager.shared.log(.critical, "Progress layer is nil after attempting to show live activity", fileID: #fileID, function: #function, line: #line)
             }
             progressLayer?.strokeEnd = max(0.0, min(1.0, value))
         }
