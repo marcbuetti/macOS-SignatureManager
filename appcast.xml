@@ -3,12 +3,13 @@
     <channel>
         <title>Signature Manager</title>
         <item>
-            <title>4.0</title>
-            <pubDate>Tue, 17 Feb 2026 18:39:36 +0100</pubDate>
-            <sparkle:version>1005</sparkle:version>
-            <sparkle:shortVersionString>4.0</sparkle:shortVersionString>
+            <title>4.0.1</title>
+            <pubDate>Sat, 21 Feb 2026 01:27:52 +0100</pubDate>
+            <sparkle:criticalUpdate/>
+            <sparkle:version>25</sparkle:version>
+            <sparkle:shortVersionString>4.0.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/marcbuetti/macOS-SignatureManager/releases/download/4.0/Signature.Manager.dmg" length="8253245" type="application/octet-stream" sparkle:edSignature="pFnLqSI7ag1RxT0spFQ8SiejQcNGow8Is6gATlycUMlUwxHBxXN/rPm1ks4+HXdCRtKj7MuPs1F1gKyaBy2qBg=="/>
+            <enclosure url="https://github.com/marcbuetti/macOS-SignatureManager/releases/download/4.0.1/Signature.Manager.dmg" length="8267326" type="application/octet-stream" sparkle:edSignature="nxiltLK1/HA0sNiUIYt5B1T+fSm19gT/62Pn1jZbHbyufYOaOF48V3hjTNYJgX93wYwvDnhd/M0Urx5CKARrCg=="/>
         </item>
     </channel>
 </rss>
